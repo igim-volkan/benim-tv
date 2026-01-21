@@ -73,11 +73,7 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onDelete, onDirecto
         </div>
 
         {/* IMDb Icon (Small) */}
-        {movie.imdbUrl && (
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <span className="bg-black text-yellow-500 text-xs font-bold px-1.5 py-0.5 border border-yellow-500">IMDb</span>
-          </div>
-        )}
+
 
       </div>
     </div>

@@ -104,9 +104,7 @@ export const HoroscopeModal: React.FC<HoroscopeModalProps> = ({ isOpen, onClose,
                                     {recommendedMovie.title}
                                 </h2>
 
-                                <div className="text-white text-lg line-clamp-3 mb-2">
-                                    {recommendedMovie.summary || "Ozet yok."}
-                                </div>
+
 
                                 <div className="text-purple-400 text-sm mt-auto">
                                     YIL: {recommendedMovie.year} | {recommendedMovie.director}

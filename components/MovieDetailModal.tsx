@@ -49,15 +49,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                         </div>
                     )}
 
-                    {/* Watched Date Overlay */}
-                    <div className="absolute bottom-0 left-0 w-full bg-black/80 backdrop-blur text-white p-4 border-t-2 border-white">
-                        <div className="text-yellow-400 font-bold mb-1 uppercase">İzlenme Tarihi</div>
-                        <div className="font-mono text-xl">
-                            {movie.watchedDate
-                                ? new Date(movie.watchedDate).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
-                                : 'Tarih yok'}
-                        </div>
-                    </div>
+
                 </div>
 
                 {/* Content Section (Right) */}
@@ -71,9 +63,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                     <h2 className="text-4xl md:text-5xl font-bold text-yellow-400 leading-none uppercase mb-2 text-shadow-sm">
                                         {movie.title.toLocaleUpperCase('tr-TR')}
                                     </h2>
-                                    <div className="text-xl text-neutral-400 font-mono mb-4">
-                                        {movie.originalTitle}
-                                    </div>
+
                                 </div>
                             </div>
 
@@ -151,15 +141,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                 </a>
                             )}
 
-                            {onDelete && (
-                                <button
-                                    onClick={() => onDelete(movie.id)}
-                                    className="flex items-center gap-2 text-red-500 hover:text-red-400 hover:bg-red-950/30 px-4 py-2 rounded transition-colors"
-                                >
-                                    <Trash2 size={20} />
-                                    <span>Kaydı Sil</span>
-                                </button>
-                            )}
+
                         </div>
 
                     </div>
