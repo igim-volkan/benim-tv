@@ -1,7 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { MovieMetadata } from "../types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const apiKey = process.env.API_KEY || "";
+const ai = new GoogleGenAI({ apiKey });
 
 export const fetchMovieMetadata = async (movieName: string, skipImageGeneration: boolean = false): Promise<MovieMetadata> => {
   // 1. Prepare Text Metadata Request
