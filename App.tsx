@@ -14,6 +14,7 @@ import { SurpriseModal } from './components/SurpriseModal';
 import { AdminPanel } from './components/AdminPanel';
 import { AboutModal } from './components/AboutModal';
 import { SuggestionModal } from './components/SuggestionModal';
+import { MovieDetailModal } from './components/MovieDetailModal';
 import { useMovieData } from './hooks/useMovieData';
 import { useMovieFilter } from './hooks/useMovieFilter';
 import { MovieEntry, MovieStatus } from './types';
@@ -65,7 +66,9 @@ export default function App() {
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const [surpriseMovie, setSurpriseMovie] = useState<MovieEntry | null>(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<MovieEntry | null>(null);
 
   // Sync Data Tab with View (when not admin)
   const handleViewChange = (newView: ViewMode) => {
@@ -225,7 +228,8 @@ export default function App() {
                   </div>
                 ) : (
                   // Watched Grid (Detailed)
-                  <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-8">
+                  // Watched Grid (Detailed -> Compact)
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-6">
                     {hookPaginatedMovies.map(movie => (
                       <MovieCard
                         key={movie.id}
@@ -233,6 +237,7 @@ export default function App() {
                         onDelete={handleDeleteMovie}
                         onMoveToWatched={handleMoveToWatched}
                         onDirectorClick={handleDirectorSelect}
+                        onClick={setSelectedMovie}
                         className="h-full"
                       />
                     ))}
@@ -363,6 +368,15 @@ export default function App() {
         onClose={() => setIsSuggestionOpen(false)}
         onSubmit={addSuggestion}
         isSubmitting={isSubmitting}
+      />
+
+      <MovieDetailModal
+        movie={selectedMovie}
+        onClose={() => setSelectedMovie(null)}
+        onDelete={(id) => {
+          handleDeleteMovie(id);
+          setSelectedMovie(null);
+        }}
       />
 
     </div>

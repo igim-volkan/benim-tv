@@ -1,122 +1,84 @@
-import React, { useState } from 'react';
-import { Trash2, Quote, Clapperboard, ExternalLink, Share2, CheckCircle2, Facebook, Instagram, MessageCircle } from 'lucide-react';
+import React from 'react';
+import { Star } from 'lucide-react';
 import { MovieEntry } from '../types';
 import { StarRating } from './StarRating';
 
 interface MovieCardProps {
   movie: MovieEntry;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   onMoveToWatched?: (movie: MovieEntry) => void;
   onDirectorClick?: (director: string) => void;
+  onClick?: (movie: MovieEntry) => void;
   className?: string;
 }
 
-export const MovieCard: React.FC<MovieCardProps> = ({ movie, onDelete, onMoveToWatched, onDirectorClick, className = '' }) => {
+export const MovieCard: React.FC<MovieCardProps> = ({ movie, onDelete, onDirectorClick, onClick, className = '' }) => {
   const isWatched = movie.status === 'watched';
 
   return (
-    <div className={`relative bg-black border-4 ${isWatched ? 'border-white' : 'border-neutral-600'} flex flex-col sm:flex-row shadow-[8px_8px_0px_#333] ${className}`}>
+    <div
+      onClick={() => onClick && onClick(movie)}
+      className={`group relative bg-black border-4 ${isWatched ? 'border-neutral-700 hover:border-yellow-400' : 'border-neutral-600'} flex flex-col shadow-[8px_8px_0px_#333] transition-all cursor-pointer h-full ${className}`}
+    >
 
       {/* Poster Section */}
-      <div className="w-full sm:w-[180px] aspect-[2/3] relative bg-neutral-900 border-b-4 sm:border-b-0 sm:border-r-4 border-white shrink-0 overflow-hidden group">
+      <div className="w-full aspect-[2/3] relative bg-neutral-900 border-b-4 border-neutral-700 overflow-hidden">
         {movie.posterBase64 ? (
           <img
             src={movie.posterBase64}
             alt={movie.title}
-            className="w-full h-full object-cover contrast-125 saturate-150 pixelated"
+            className="w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-transform duration-500"
             style={{ imageRendering: 'pixelated' }}
           />
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center bg-blue-800 text-white">
             <span className="text-4xl">{movie.emoji}</span>
-            <span className="text-sm mt-2 text-yellow-400">NO IMAGE</span>
+            <span className="text-sm mt-2 text-yellow-400 font-bold">NO IMAGE</span>
           </div>
         )}
 
-        {/* Genre Badge - Only for Watched */}
-        {isWatched && (
-          <div className={`absolute top-0 left-0 text-black text-lg font-bold px-2 py-0.5 border-b-2 border-r-2 border-black ${isWatched ? 'bg-yellow-400' : 'bg-cyan-400'}`}>
+        {/* Genre Badge */}
+        {isWatched && movie.genre?.[0] && (
+          <div className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 shadow-sm border border-black uppercase">
             {movie.genre[0]}
           </div>
         )}
       </div>
 
       {/* Content Section */}
-      <div className="flex-1 p-5 flex flex-col relative bg-black gap-4 min-w-0">
+      <div className="p-4 flex flex-col gap-2 bg-black flex-1">
 
-        <div className="flex justify-between items-start gap-4">
-          <div className="flex-1 min-w-0">
-            {/* Title - Turkish Uppercase Fix */}
-            <h3 className="text-3xl text-yellow-400 leading-none mb-2 font-bold uppercase tracking-wide break-words">
-              {movie.title.toLocaleUpperCase('tr-TR')}
-            </h3>
+        {/* Title */}
+        <div>
+          <h3 className="text-2xl text-yellow-400 leading-none font-bold uppercase tracking-wide line-clamp-2 mb-1">
+            {movie.title.toLocaleUpperCase('tr-TR')}
+          </h3>
+          <div className="text-neutral-500 font-bold text-sm uppercase truncate">
+            {movie.director}
+          </div>
+        </div>
 
-            {isWatched && (
-              <div className="flex flex-wrap gap-1 items-center">
-                <span className="text-lg text-green-400 font-bold uppercase">{'>'}</span>
-                {movie.director.split(',').map((d, i, arr) => (
-                  <React.Fragment key={i}>
-                    <button
-                      onClick={() => onDirectorClick && onDirectorClick(d.trim())}
-                      className="text-lg text-green-400 hover:bg-green-400 hover:text-black transition-colors uppercase inline-block font-bold border-b border-transparent hover:border-black"
-                      disabled={!onDirectorClick}
-                    >
-                      {d.trim().toLocaleUpperCase('tr-TR')}
-                    </button>
-                    {i < arr.length - 1 && <span className="text-green-400 font-bold">,</span>}
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
+        {/* Year & Rating */}
+        <div className="mt-auto pt-3 border-t-2 border-neutral-800 flex items-center justify-between">
+          <div className="bg-neutral-800 text-white px-2 py-0.5 text-sm font-bold border border-neutral-600">
+            {movie.year}
           </div>
 
-          {/* Year Badge - Only for Watched */}
-          {isWatched && (
-            <div className="bg-white text-black px-3 py-1 text-2xl font-bold shrink-0 shadow-[4px_4px_0px_rgba(50,50,50,1)] h-fit">
-              {movie.year}
+          {isWatched && movie.userRating && (
+            <div className="flex items-center gap-1.5">
+              <Star size={14} className="text-yellow-400 fill-yellow-400" />
+              <span className="text-white font-bold text-lg">{movie.userRating}</span>
             </div>
           )}
         </div>
 
-        {/* Summary Block - Only for Watched */}
-        {isWatched && (
-          <div className="flex-1 text-white text-lg leading-tight py-1">
-            {movie.summary}
+        {/* IMDb Icon (Small) */}
+        {movie.imdbUrl && (
+          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <span className="bg-black text-yellow-500 text-xs font-bold px-1.5 py-0.5 border border-yellow-500">IMDb</span>
           </div>
         )}
 
-        {/* Footer */}
-        <div className="mt-auto border-t-2 border-neutral-800 pt-4 flex flex-col gap-3">
-
-          {isWatched ? (
-            <>
-              {movie.userReview && (
-                <div className="text-magenta-500 text-xl italic bg-neutral-900 p-3 border border-neutral-700">
-                  "{movie.userReview.toLocaleUpperCase('tr-TR')}"
-                </div>
-              )}
-
-              <div className="flex flex-col xl:flex-row gap-3 items-stretch xl:items-center justify-between">
-                <div className="bg-black border-2 border-yellow-400 px-3 py-1 flex justify-center">
-                  <StarRating rating={movie.userRating || 0} readOnly size={18} />
-                </div>
-
-                <div className="flex gap-3 flex-1 justify-end relative mr-1">
-                  {movie.imdbUrl && (
-                    <a
-                      href={movie.imdbUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 xl:flex-none bg-yellow-400 text-black px-4 py-1 text-lg font-bold hover:bg-white hover:text-black border-2 border-transparent transition-colors text-center"
-                    >
-                      IMDB
-                    </a>
-                  )}
-                </div>
-              </div>
-            </>
-          ) : null}
-        </div>
       </div>
     </div>
   );
