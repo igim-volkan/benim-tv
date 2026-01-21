@@ -1,0 +1,5 @@
+{
+  "name": "Film Günlüğüm",
+  "description": "İzlediğiniz filmleri puanlayın, yorumlayın ve Gemini AI desteğiyle otomatik film detaylarını getirerek kişisel sinema koleksiyonunuzu oluşturun.",
+  "requestFramePermissions": []
+}
