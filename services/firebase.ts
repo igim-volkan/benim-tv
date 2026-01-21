@@ -3,13 +3,13 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAPC-PciJOrOYTMt9fFLQup1SQ7n31QCro",
-    authDomain: "benim-televizyonum-6791f.firebaseapp.com",
-    projectId: "benim-televizyonum-6791f",
-    storageBucket: "benim-televizyonum-6791f.firebasestorage.app",
-    messagingSenderId: "360775517129",
-    appId: "1:360775517129:web:a9db393cc0bca6058c5e18",
-    measurementId: "G-4XP0D3C927"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
