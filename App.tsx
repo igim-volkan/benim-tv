@@ -306,46 +306,51 @@ export default function App() {
       </main>
 
       {/* Footer - Split Buttons */}
-      <footer className="fixed bottom-0 left-0 w-full bg-black border-t-2 border-white p-2 z-40 flex gap-2">
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex-1 bg-yellow-400 text-black font-bold text-lg sm:text-2xl py-3 border-2 border-transparent hover:border-white hover:bg-yellow-300 transition-colors"
-        >
-          [ + YENİ KAYIT ]
-        </button>
+      <footer className="fixed bottom-0 left-0 w-full bg-black border-t-2 border-white p-2 z-40 grid grid-cols-2 gap-2">
+        {/* Left Half: Bir Film Ismarla */}
         <button
           onClick={() => setIsPatreonOpen(true)}
-          className="flex-1 bg-cyan-400 text-black font-bold text-lg sm:text-2xl py-3 border-2 border-transparent hover:border-white hover:bg-cyan-300 transition-colors flex items-center justify-center gap-2"
+          className="w-full bg-cyan-400 text-black font-bold text-lg sm:text-2xl py-3 border-2 border-transparent hover:border-white hover:bg-cyan-300 transition-colors flex items-center justify-center gap-2"
         >
           <Ticket className="w-6 h-6 sm:w-8 sm:h-8" />
           <span>[ BİR FİLM ISMARLA ]</span>
         </button>
-        <button
-          onClick={() => {
-            if (isAdminLoggedIn) {
-              handleViewChange(view === 'admin' ? 'watched' : 'admin');
-            } else {
-              setIsLoginModalOpen(true);
-            }
-          }}
-          className={`bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center ${view === 'admin' ? 'bg-red-900/50 text-white border-red-500' : ''}`}
-          title={isAdminLoggedIn ? "YONETIM PANELI (AKTIF)" : "YONETICI GIRISI"}
-        >
-          {isAdminLoggedIn ? (view === 'admin' ? 'ÇIKIŞ' : 'ADMİN') : 'GİRİŞ'}
-        </button>
-        <button
-          onClick={() => setIsAboutOpen(true)}
-          className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
-        >
-          ?
-        </button>
-        <button
-          onClick={() => setIsSuggestionOpen(true)}
-          className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
-          title="ONERI FORMU"
-        >
-          ÖF
-        </button>
+
+        {/* Right Half: Other Actions */}
+        <div className="flex gap-2 w-full">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex-1 bg-yellow-400 text-black font-bold text-lg sm:text-2xl py-3 border-2 border-transparent hover:border-white hover:bg-yellow-300 transition-colors"
+          >
+            [ + YENİ KAYIT ]
+          </button>
+          <button
+            onClick={() => {
+              if (isAdminLoggedIn) {
+                handleViewChange(view === 'admin' ? 'watched' : 'admin');
+              } else {
+                setIsLoginModalOpen(true);
+              }
+            }}
+            className={`bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center ${view === 'admin' ? 'bg-red-900/50 text-white border-red-500' : ''}`}
+            title={isAdminLoggedIn ? "YONETIM PANELI (AKTIF)" : "YONETICI GIRISI"}
+          >
+            {isAdminLoggedIn ? (view === 'admin' ? 'ÇIKIŞ' : 'ADMİN') : 'GİRİŞ'}
+          </button>
+          <button
+            onClick={() => setIsAboutOpen(true)}
+            className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
+          >
+            ?
+          </button>
+          <button
+            onClick={() => setIsSuggestionOpen(true)}
+            className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
+            title="ONERI FORMU"
+          >
+            ÖF
+          </button>
+        </div>
       </footer>
 
       <AddMovieModal
