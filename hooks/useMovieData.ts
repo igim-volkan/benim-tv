@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MovieEntry, AddMovieFormData, MovieStatus, SuggestionEntry } from '../types';
 import { fetchMovieMetadata } from '../services/geminiService';
-import { db } from '../services/firebase';
+import { db, auth } from '../services/firebase';
 import {
     collection,
     addDoc,
@@ -12,6 +12,7 @@ import {
     query,
     orderBy
 } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export const useMovieData = () => {
     const [movies, setMovies] = useState<MovieEntry[]>([]);
@@ -32,9 +33,23 @@ export const useMovieData = () => {
         return () => unsubscribe();
     }, []);
 
-    // Suggestions Sync
+    // Suggestions Sync (Only if Admin)
     const [suggestions, setSuggestions] = useState<SuggestionEntry[]>([]);
+    const [isAdmin, setIsAdmin] = useState(false);
+
     useEffect(() => {
+        const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+            setIsAdmin(!!user);
+        });
+        return () => unsubscribeAuth();
+    }, []);
+
+    useEffect(() => {
+        if (!isAdmin) {
+            setSuggestions([]);
+            return;
+        }
+
         const q = query(collection(db, "suggestions"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const fetched: SuggestionEntry[] = snapshot.docs.map(doc => ({
@@ -42,9 +57,11 @@ export const useMovieData = () => {
                 ...doc.data()
             } as SuggestionEntry));
             setSuggestions(fetched);
+        }, (error) => {
+            console.error("Suggestion fetch error (likely permission):", error);
         });
         return () => unsubscribe();
-    }, []);
+    }, [isAdmin]);
 
     const addMovie = async (data: AddMovieFormData): Promise<void> => {
         setIsSubmitting(true);

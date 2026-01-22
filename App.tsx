@@ -15,7 +15,10 @@ import { AdminPanel } from './components/AdminPanel';
 import { AboutModal } from './components/AboutModal';
 import { SuggestionModal } from './components/SuggestionModal';
 import { MovieDetailModal } from './components/MovieDetailModal';
+import { LoginModal } from './components/LoginModal';
 import { useMovieData } from './hooks/useMovieData';
+import { auth } from './services/firebase';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useMovieFilter } from './hooks/useMovieFilter';
 import { MovieEntry, MovieStatus } from './types';
 
@@ -69,6 +72,17 @@ export default function App() {
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<MovieEntry | null>(null);
+
+  // Auth State
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  React.useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAdminLoggedIn(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
 
   // Sync Data Tab with View (when not admin)
   const handleViewChange = (newView: ViewMode) => {
@@ -171,7 +185,7 @@ export default function App() {
 
       <main className="max-w-[1800px] mx-auto px-4 py-6">
 
-        {view === 'admin' ? (
+        {view === 'admin' && isAdminLoggedIn ? (
           <AdminPanel
             movies={movies}
             onApprove={async (id) => await approveMovie(id)}
@@ -291,17 +305,16 @@ export default function App() {
         </button>
         <button
           onClick={() => {
-            const code = prompt("YONETICI KODU:");
-            if (code === "900") {
-              handleViewChange('admin');
+            if (isAdminLoggedIn) {
+              handleViewChange(view === 'admin' ? 'watched' : 'admin');
             } else {
-              alert("HATALI KOD! ERISIM REDDEDILDI.");
+              setIsLoginModalOpen(true);
             }
           }}
-          className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
-          title="YONETIM"
+          className={`bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center ${view === 'admin' ? 'bg-red-900/50 text-white border-red-500' : ''}`}
+          title={isAdminLoggedIn ? "YONETIM PANELI (AKTIF)" : "YONETICI GIRISI"}
         >
-          900
+          {isAdminLoggedIn ? (view === 'admin' ? 'ÇIKIŞ' : 'ADMİN') : 'GİRİŞ'}
         </button>
         <button
           onClick={() => setIsAboutOpen(true)}
@@ -377,6 +390,12 @@ export default function App() {
           handleDeleteMovie(id);
           setSelectedMovie(null);
         }}
+      />
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onLoginSuccess={() => handleViewChange('admin')}
       />
 
     </div>
