@@ -29,7 +29,7 @@ export const PatreonModal: React.FC<PatreonModalProps> = ({ isOpen, onClose }) =
                     </h2>
 
                     <p className="text-lg text-neutral-300 leading-relaxed">
-                        Bazen bir filmseveri en çok mutlu eden şey, bir başkasının "Acaba ne hissedecek?" diye merak ettiği o filmi bir başkasına zorla izletmektir. Şimdi bu gücü size veriyorum! Patreon üzerinden bana bir "Bilet" ısmarlayarak, izleyeceğim bir sonraki filmin kaderini belirleyebilirsiniz.
+                        Bir filmsever için en büyük keyif, 'Acaba ne hissedecek?' diye merak ettiği o filmi bir başkasına izletip tepkisini görmektir. Şimdi bu gücü size devrediyorum! Patreon üzerinden bana bir 'Bilet' ısmarlayarak, bir sonraki filmimi seçebilir ve beni sinematik bir maceraya (ya da bir felakete!) sürükleyebilirsiniz.
                     </p>
 
                     <div className="bg-red-900/20 border border-red-500/50 p-4 rounded-lg w-full">
