@@ -16,13 +16,16 @@ import { AboutModal } from './components/AboutModal';
 import { SuggestionModal } from './components/SuggestionModal';
 import { MovieDetailModal } from './components/MovieDetailModal';
 import { LoginModal } from './components/LoginModal';
+import { BlogCard } from './components/BlogCard';
+import { BlogDetailModal } from './components/BlogDetailModal';
+import { BLOG_POSTS } from './services/blogData';
 import { useMovieData } from './hooks/useMovieData';
 import { auth } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useMovieFilter } from './hooks/useMovieFilter';
-import { MovieEntry, MovieStatus } from './types';
+import { MovieEntry, MovieStatus, BlogEntry } from './types';
 
-type ViewMode = 'watched' | 'watchlist' | 'admin';
+type ViewMode = 'watched' | 'watchlist' | 'admin' | 'blog';
 
 export default function App() {
   // 1. Core Data Hook
@@ -72,6 +75,9 @@ export default function App() {
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<MovieEntry | null>(null);
+
+  // Blog State
+  const [selectedBlogPost, setSelectedBlogPost] = useState<BlogEntry | null>(null);
 
   // Auth State
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -178,7 +184,7 @@ export default function App() {
         searchTerm={hookFilters.searchTerm}
         onSearchChange={(val) => hookSetFilter('searchTerm', val)}
         onHoroscopeClick={() => setIsHoroscopeOpen(true)}
-        onBlogClick={() => setIsBlogOpen(true)}
+        onBlogClick={() => handleViewChange('blog')}
         onMusicClick={() => setIsMusicOpen(true)}
       />
 
@@ -194,6 +200,17 @@ export default function App() {
             suggestions={suggestions}
             onDeleteSuggestion={deleteSuggestion}
           />
+        ) : view === 'blog' ? (
+          // BLOG VIEW
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {BLOG_POSTS.map(post => (
+              <BlogCard
+                key={post.id}
+                post={post}
+                onClick={setSelectedBlogPost}
+              />
+            ))}
+          </div>
         ) : (
           <>
             {currentTabMovies.length > 0 && view !== 'watchlist' && (
@@ -396,6 +413,11 @@ export default function App() {
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
         onLoginSuccess={() => handleViewChange('admin')}
+      />
+
+      <BlogDetailModal
+        post={selectedBlogPost}
+        onClose={() => setSelectedBlogPost(null)}
       />
 
     </div>

@@ -44,3 +44,14 @@ export interface SuggestionEntry {
   message: string;
   createdAt: string;
 }
+
+export interface BlogEntry {
+  id: string;
+  title: string;
+  summary: string;
+  content: string; // HTML or Markdown string
+  author: string;
+  date: string;
+  readTime: string;
+  coverImage?: string; // Optional URL/Base64
+}
