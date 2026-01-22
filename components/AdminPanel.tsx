@@ -159,7 +159,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                     </p>
                 </div>
             ) : (
-                <div className="grid gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {moviesDisplay.map(movie => (
                         <div key={movie.id} className="border-2 border-white bg-neutral-900 p-4 flex gap-4 items-start">
                             {/* Poster Thumb */}
