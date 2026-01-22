@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Music, X, RefreshCw } from 'lucide-react';
+import { Music, X, RefreshCw, ListMusic } from 'lucide-react';
 
 interface MusicModalProps {
     isOpen: boolean;
@@ -120,7 +120,7 @@ export const MusicModal: React.FC<MusicModalProps> = ({ isOpen, onClose }) => {
                 <div className="bg-pink-500 text-black px-4 py-2 flex justify-between items-center font-bold text-2xl mb-1">
                     <div className="flex items-center gap-2">
                         <Music />
-                        <span>700 MÜZİK KUTUSU</span>
+                        <span>600 MÜZİK KUTUSU</span>
                     </div>
                     <button onClick={onClose} className="hover:bg-black hover:text-white px-2 transition-colors">[X]</button>
                 </div>
@@ -147,6 +147,15 @@ export const MusicModal: React.FC<MusicModalProps> = ({ isOpen, onClose }) => {
                             <RefreshCw size={20} />
                             <span>KARIŞTIR</span>
                         </button>
+                        <a
+                            href="https://www.youtube.com/watch?v=JuSsvM8B4Jc&list=PLh15T1z9GF_G3CcazBAjoBZeTiOEIAdd7"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-neutral-800 hover:bg-neutral-700 text-white px-6 py-3 font-bold border-2 border-transparent hover:border-pink-500 transition-colors flex items-center gap-2"
+                        >
+                            <ListMusic size={20} />
+                            <span>OYNATMA LİSTESİ</span>
+                        </a>
                     </div>
 
                     <p className="text-neutral-600 text-xs">
