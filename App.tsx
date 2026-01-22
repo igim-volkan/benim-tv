@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Tv, Ticket } from 'lucide-react';
+import { Sparkles, Tv, Ticket, Search } from 'lucide-react';
 import { AddMovieModal } from './components/AddMovieModal';
 import { MovieCard } from './components/MovieCard';
 import { WatchlistCard } from './components/WatchlistCard';
@@ -304,6 +304,26 @@ export default function App() {
           </>
         )}
       </main>
+      {/* Bottom Search Bar */}
+      {isSearchVisible && (
+        <div className="fixed bottom-[73px] sm:bottom-[77px] left-0 w-full bg-blue-800 p-2 border-y-2 border-white flex items-center gap-2 z-50 animate-in slide-in-from-bottom duration-200 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
+          <span className="text-white font-bold whitespace-nowrap px-2">ARAMA &gt;</span>
+          <input
+            autoFocus
+            type="text"
+            value={hookFilters.searchTerm}
+            onChange={(e) => hookSetFilter('searchTerm', e.target.value.toUpperCase())}
+            placeholder="FİLM VEYA YÖNETMEN ARA..."
+            className="w-full bg-black text-yellow-400 p-2 text-xl font-bold border-none outline-none placeholder-neutral-700"
+          />
+          <button
+            onClick={() => setIsSearchVisible(false)}
+            className="bg-red-600 text-white px-3 py-1 font-bold hover:bg-red-500 whitespace-nowrap"
+          >
+            KAPAT
+          </button>
+        </div>
+      )}
 
       {/* Footer - Split Buttons */}
       <footer className="fixed bottom-0 left-0 w-full bg-black border-t-2 border-white p-2 z-40 grid grid-cols-2 gap-2">
@@ -323,6 +343,13 @@ export default function App() {
             className="flex-1 bg-yellow-400 text-black font-bold text-lg sm:text-2xl py-3 border-2 border-transparent hover:border-white hover:bg-yellow-300 transition-colors"
           >
             [ + YENİ KAYIT ]
+          </button>
+          <button
+            onClick={() => setIsSearchVisible(!isSearchVisible)}
+            className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
+            title="ARAMA"
+          >
+            <Search className="w-6 h-6" />
           </button>
           <button
             onClick={() => {
