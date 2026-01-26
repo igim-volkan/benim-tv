@@ -18,6 +18,7 @@ export const useMovieData = () => {
     const [movies, setMovies] = useState<MovieEntry[]>([]);
     const [activeTab, setActiveTab] = useState<MovieStatus>('watched');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     // Load from Firestore (Real-time)
     useEffect(() => {
@@ -28,6 +29,7 @@ export const useMovieData = () => {
                 ...doc.data()
             } as MovieEntry));
             setMovies(fetchedMovies);
+            setIsLoading(false);
         });
 
         return () => unsubscribe();
@@ -191,6 +193,7 @@ export const useMovieData = () => {
         isSubmitting,
         suggestions,
         addSuggestion,
-        deleteSuggestion
+        deleteSuggestion,
+        isLoading
     };
 };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Tv, Ticket, Search } from 'lucide-react';
+import { Sparkles, Tv, Ticket, Search, Loader } from 'lucide-react';
 import { AddMovieModal } from './components/AddMovieModal';
 import { MovieCard } from './components/MovieCard';
 import { WatchlistCard } from './components/WatchlistCard';
@@ -40,7 +40,8 @@ export default function App() {
     approveMovie,
     addSuggestion,
     suggestions,
-    deleteSuggestion
+    deleteSuggestion,
+    isLoading
   } = useMovieData();
 
   const [view, setView] = useState<ViewMode>('watched');
@@ -188,6 +189,20 @@ export default function App() {
         onHoroscopeClick={() => setIsHoroscopeOpen(true)}
         onBlogClick={() => handleViewChange('blog')}
         onMusicClick={() => setIsMusicOpen(true)}
+
+        // Mobile Menu Props
+        onPatreonClick={() => setIsPatreonOpen(true)}
+        onAddMovieClick={() => setIsModalOpen(true)}
+        onLoginClick={() => {
+          if (isAdminLoggedIn) {
+            handleViewChange(view === 'admin' ? 'watched' : 'admin');
+          } else {
+            setIsLoginModalOpen(true);
+          }
+        }}
+        onSuggestionClick={() => setIsSuggestionOpen(true)}
+        onAboutClick={() => setIsAboutOpen(true)}
+        isAdminLoggedIn={isAdminLoggedIn}
       />
 
 
@@ -212,6 +227,13 @@ export default function App() {
                 onClick={setSelectedBlogPost}
               />
             ))}
+          </div>
+        ) : isLoading ? (
+          // LOADING STATE
+          <div className="flex flex-col items-center justify-center h-[50vh] text-center">
+            <Loader className="w-16 h-16 text-yellow-400 animate-spin mb-4" />
+            <h2 className="text-3xl text-white animate-pulse teletext-shadow">BULUT BAĞLANTISI KURULUYOR...</h2>
+            <p className="text-neutral-500 mt-2 font-mono text-sm tracking-widest">SİNYAL ARANIYOR</p>
           </div>
         ) : (
           <>
@@ -330,7 +352,7 @@ export default function App() {
       )}
 
       {/* Footer - Split Buttons */}
-      <footer className="fixed bottom-0 left-0 w-full bg-black border-t-2 border-white p-2 z-40 grid grid-cols-2 gap-2">
+      <footer className="fixed bottom-0 left-0 w-full bg-black border-t-2 border-white p-2 z-40 hidden md:grid grid-cols-2 gap-2">
         {/* Left Half: Bir Film Ismarla */}
         <button
           onClick={() => setIsPatreonOpen(true)}
