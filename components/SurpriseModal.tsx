@@ -42,8 +42,8 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
                     <X size={24} />
                 </button>
 
-                {/* Poster Section (Left) */}
-                <div className="w-full md:w-[400px] shrink-0 bg-black relative border-b-4 md:border-b-0 md:border-r-4 border-white">
+                {/* Desktop Poster (Left Column) - Hidden on Mobile */}
+                <div className="hidden md:block w-[400px] shrink-0 bg-black relative border-r-4 border-white">
                     {movie.posterBase64 ? (
                         <img
                             src={movie.posterBase64}
@@ -51,7 +51,7 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
                             className="w-full h-full object-cover contrast-125 saturate-150 pixelated"
                         />
                     ) : (
-                        <div className="w-full h-[300px] md:h-full flex flex-col items-center justify-center text-6xl text-neutral-700">
+                        <div className="w-full h-full flex flex-col items-center justify-center text-6xl text-neutral-700">
                             {movie.emoji}
                         </div>
                     )}
@@ -64,10 +64,49 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
 
                 {/* Content Section (Right) */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar bg-neutral-900">
-                    <div className="p-6 md:p-8 flex flex-col gap-6">
+                    <div className="p-4 md:p-8 flex flex-col gap-6">
 
-                        {/* Header */}
-                        <div>
+                        {/* Mobile Header (Side-by-Side: Poster + Info) - Hidden on Desktop */}
+                        <div className="flex gap-4 md:hidden items-start pr-12">
+                            {/* Mobile Poster Thumbnail */}
+                            <div className="w-1/3 shrink-0 border-2 border-white relative">
+                                {movie.posterBase64 ? (
+                                    <img
+                                        src={movie.posterBase64}
+                                        alt={movie.title}
+                                        className="w-full h-auto object-cover aspect-[2/3] contrast-125 saturate-150 pixelated"
+                                    />
+                                ) : (
+                                    <div className="w-full aspect-[2/3] bg-neutral-800 flex items-center justify-center text-4xl">
+                                        {movie.emoji}
+                                    </div>
+                                )}
+                                {/* Mobile Badge */}
+                                <div className="absolute top-1 left-1 bg-cyan-400 text-black text-[10px] font-bold px-2 py-0 border border-black shadow-[2px_2px_0px_#000] z-10">
+                                    300
+                                </div>
+                            </div>
+
+                            {/* Mobile Title & Meta */}
+                            <div className="flex-1 min-w-0">
+                                <h2 className="text-3xl font-bold text-yellow-400 leading-none uppercase mb-2 text-shadow-sm break-words">
+                                    {movie.title.toLocaleUpperCase('tr-TR')}
+                                </h2>
+                                <div className="flex flex-wrap gap-2 text-xs font-bold">
+                                    <div className="bg-yellow-400 text-black px-2 py-0.5 border border-transparent">
+                                        {movie.year}
+                                    </div>
+                                    {movie.genre.slice(0, 2).map(g => (
+                                        <div key={g} className="bg-cyan-900 text-cyan-200 px-2 py-0.5 border border-cyan-700 uppercase">
+                                            {g}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Desktop Header - Hidden on Mobile */}
+                        <div className="hidden md:block">
                             <div className="flex items-start justify-between gap-4">
                                 <div>
                                     <h2 className="text-4xl md:text-5xl font-bold text-yellow-400 leading-none uppercase mb-2 text-shadow-sm">
@@ -91,12 +130,12 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
                         <div className="h-px bg-neutral-700 w-full" />
 
                         {/* Info Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-lg">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 text-base md:text-lg">
                             <div>
                                 <div className="flex items-center gap-2 text-neutral-500 mb-1 uppercase text-sm font-bold">
                                     <User size={16} /> Yönetmen
                                 </div>
-                                <div className="text-white text-xl">
+                                <div className="text-white text-lg md:text-xl">
                                     {movie.director}
                                 </div>
                             </div>
@@ -107,30 +146,30 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
                                         <Star size={16} /> Puanım
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <StarRating rating={movie.userRating} readOnly size={24} />
-                                        <span className="text-yellow-400 font-bold text-2xl">{movie.userRating}/5</span>
+                                        <StarRating rating={movie.userRating} readOnly size={20} />
+                                        <span className="text-yellow-400 font-bold text-xl md:text-2xl">{movie.userRating}/5</span>
                                     </div>
                                 </div>
                             )}
                         </div>
 
                         {/* Summary */}
-                        <div className="bg-black/30 p-6 border-l-4 border-yellow-400">
-                            <div className="flex items-center gap-2 text-yellow-400 mb-3 uppercase font-bold tracking-widest text-sm">
+                        <div className="bg-black/30 p-4 md:p-6 border-l-4 border-yellow-400">
+                            <div className="flex items-center gap-2 text-yellow-400 mb-2 md:mb-3 uppercase font-bold tracking-widest text-sm">
                                 <Film size={16} /> Özet
                             </div>
-                            <p className="text-xl leading-relaxed text-neutral-200 font-serif">
+                            <p className="text-lg md:text-xl leading-relaxed text-neutral-200 font-serif">
                                 {movie.summary}
                             </p>
                         </div>
 
                         {/* Review */}
                         {movie.userReview && (
-                            <div className="bg-neutral-800 p-6 border border-neutral-700 relative group">
-                                <Quote className="absolute top-4 right-4 text-neutral-700 w-12 h-12 rotate-180" />
+                            <div className="bg-neutral-800 p-4 md:p-6 border border-neutral-700 relative group">
+                                <Quote className="absolute top-4 right-4 text-neutral-700 w-8 h-8 md:w-12 md:h-12 rotate-180" />
                                 <div className="relative z-10">
                                     <div className="text-magenta-500 font-bold mb-2 uppercase text-sm">İncelemem</div>
-                                    <p className="text-2xl text-white italic font-serif leading-relaxed">
+                                    <p className="text-xl md:text-2xl text-white italic font-serif leading-relaxed">
                                         "{movie.userReview}"
                                     </p>
                                 </div>
@@ -138,9 +177,7 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
                         )}
 
                         {/* Footer Actions */}
-                        <div className="mt-8 flex flex-col gap-4 pt-6 border-t border-neutral-700">
-
-
+                        <div className="mt-4 md:mt-8 flex flex-col gap-4 pt-6 border-t border-neutral-700">
 
                             {/* Try Again Button */}
                             <button
