@@ -237,7 +237,7 @@ export default function App() {
           </div>
         ) : (
           <>
-            {currentTabMovies.length > 0 && view !== 'watchlist' && (
+            {currentTabMovies.length > 0 && (
               <FilterBar
                 activeTab={view as MovieStatus}
                 selectedGenre={hookFilters.genre}
