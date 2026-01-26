@@ -21,6 +21,7 @@ export interface MovieEntry extends MovieMetadata {
   userReview?: string; // Optional for watchlist
   watchedDate?: string; // Optional for watchlist
   isApproved?: boolean;
+  createdAt?: string;
 }
 
 export interface AddMovieFormData {

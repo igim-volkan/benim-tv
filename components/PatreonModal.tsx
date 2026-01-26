@@ -22,7 +22,7 @@ export const PatreonModal: React.FC<PatreonModalProps> = ({ isOpen, onClose }) =
                 </div>
 
                 {/* Content */}
-                <div className="bg-black border-2 border-neutral-700 p-8 text-white flex flex-col items-center text-center gap-6 max-h-[70vh] overflow-y-auto custom-scrollbar">
+                <div className="bg-black border-2 border-neutral-700 p-8 text-white flex flex-col items-center text-center gap-6 max-h-[70vh] overflow-y-auto custom-scrollbar font-inter font-normal">
 
                     <h2 className="text-2xl font-bold text-cyan-400">
                         "Sıradaki Filmim Sizin Ellerinizde: Yönetmen Koltuğuna Siz Geçin!"
@@ -81,7 +81,7 @@ export const PatreonModal: React.FC<PatreonModalProps> = ({ isOpen, onClose }) =
                         href="https://www.patreon.com/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="w-full bg-cyan-400 text-black px-8 py-4 text-2xl font-bold hover:bg-white hover:text-cyan-500 transition-colors flex items-center justify-center gap-2 mt-4"
+                        className="w-full bg-cyan-400 text-black px-8 py-4 text-2xl font-bold hover:bg-white hover:text-cyan-500 transition-colors flex items-center justify-center gap-2 mt-4 font-mono uppercase tracking-wider"
                     >
                         <span>PATREON'A GİT</span>
                         <ExternalLink size={24} />

@@ -29,7 +29,7 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post, onClick }) => {
                 </h3>
 
                 {/* Summary */}
-                <p className="text-neutral-400 text-sm line-clamp-4 leading-relaxed mb-6 flex-1">
+                <p className="text-neutral-400 text-sm line-clamp-4 leading-relaxed mb-6 flex-1 font-inter font-normal">
                     {post.summary}
                 </p>
 

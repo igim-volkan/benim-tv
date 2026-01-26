@@ -21,6 +21,8 @@ export const useMovieFilter = (movies: MovieEntry[]) => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 30;
 
+    const [sortOption, setSortOption] = useState<'year_asc' | 'year_desc' | 'title_asc' | 'title_desc' | 'date_asc' | 'date_desc'>('date_desc');
+
     const setFilter = (key: keyof FilterState, value: any) => {
         setFilters(prev => ({ ...prev, [key]: value }));
     };
@@ -33,12 +35,13 @@ export const useMovieFilter = (movies: MovieEntry[]) => {
             rating: '',
             director: ''
         });
+        setSortOption('date_desc');
     };
 
     // Reset page on filter change
     useEffect(() => {
         setCurrentPage(1);
-    }, [filters]);
+    }, [filters, sortOption]);
 
     // Derived Lists for Dropdowns
     const availableGenres = useMemo(() => {
@@ -67,7 +70,7 @@ export const useMovieFilter = (movies: MovieEntry[]) => {
 
     // Filtering Logic
     const filteredMovies = useMemo(() => {
-        return movies.filter(m => {
+        const filtered = movies.filter(m => {
             const matchesSearch = m.title.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
                 m.originalTitle.toLowerCase().includes(filters.searchTerm.toLowerCase()) ||
                 m.director.toLowerCase().includes(filters.searchTerm.toLowerCase());
@@ -80,10 +83,30 @@ export const useMovieFilter = (movies: MovieEntry[]) => {
             const movieDirectors = m.director ? m.director.split(',').map(s => s.trim()) : [];
             const matchesDirector = filters.director ? movieDirectors.includes(filters.director) : true;
 
-            // Show ALL movies in search/filter results regardless of approval status (handled by App.tsx passing approvedMovies)
             return matchesSearch && matchesGenre && matchesYear && matchesRating && matchesDirector;
         });
-    }, [movies, filters]);
+
+        // Apply Sorting
+        return filtered.sort((a, b) => {
+            switch (sortOption) {
+                case 'year_asc':
+                    return a.year.localeCompare(b.year);
+                case 'year_desc':
+                    return b.year.localeCompare(a.year);
+                case 'title_asc':
+                    return a.title.localeCompare(b.title);
+                case 'title_desc':
+                    return b.title.localeCompare(a.title);
+                case 'date_asc':
+                    return (a.createdAt || '').localeCompare(b.createdAt || '');
+                case 'date_desc':
+                    return (b.createdAt || '').localeCompare(a.createdAt || '');
+                default:
+                    return 0;
+            }
+        });
+
+    }, [movies, filters, sortOption]);
 
     // Pagination Logic
     const totalPages = Math.ceil(filteredMovies.length / itemsPerPage);
@@ -99,6 +122,8 @@ export const useMovieFilter = (movies: MovieEntry[]) => {
         filters,
         setFilter,
         resetFilters,
+        sortOption,
+        setSortOption,
         filteredMovies, // Keep full list for counts
         paginatedMovies, // Use this for display
         availableGenres,

@@ -35,9 +35,9 @@ export const BlogDetailModal: React.FC<BlogDetailModalProps> = ({ post, onClose 
                 </div>
 
                 {/* Article Content */}
-                <div className="p-8 md:p-12 bg-neutral-900 text-neutral-300 text-xl md:text-2xl leading-relaxed font-serif">
+                <div className="p-8 md:p-12 bg-neutral-900 text-neutral-300 text-lg md:text-xl leading-relaxed font-inter font-normal">
                     <div
-                        className="prose prose-invert prose-xl md:prose-2xl max-w-none 
+                        className="prose prose-invert prose-lg md:prose-xl max-w-none 
                         prose-headings:font-sans prose-headings:font-bold prose-headings:text-yellow-400
                         prose-p:mb-8 prose-p:leading-loose
                         prose-strong:text-white"

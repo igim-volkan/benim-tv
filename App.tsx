@@ -59,7 +59,9 @@ export default function App() {
     availableGenres: hookAvailableGenres,
     availableYears: hookAvailableYears,
     availableDirectors: hookAvailableDirectors,
-    pagination: hookPagination
+    pagination: hookPagination,
+    sortOption,
+    setSortOption
   } = useMovieFilter(currentTabMovies);
 
   // 3. UI State
@@ -227,6 +229,8 @@ export default function App() {
                 availableGenres={hookAvailableGenres}
                 availableDirectors={hookAvailableDirectors}
                 availableYears={hookAvailableYears}
+                sortOption={sortOption}
+                setSortOption={setSortOption}
               />
             )}
 
