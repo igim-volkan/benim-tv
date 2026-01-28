@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
 
                 {/* Logo Group */}
                 <div className="flex items-center gap-1 mr-auto">
-                    <span className="bg-white text-black px-2 font-bold">BENİM</span>
+                    <span className="bg-white text-black px-2 font-bold">BLVTMN</span>
                     <span className="text-yellow-400 font-bold teletext-shadow">TV</span>
                     <span className="text-red-500 text-xs border border-red-500 px-1 ml-1 self-start">TEST</span>
                 </div>

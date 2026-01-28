@@ -12,7 +12,7 @@ export const BLOG_POSTS: BlogEntry[] = [
 
             <p class="mb-6 font-bold text-yellow-400">LİSTE HAZIRLANIYOR... (Yakında eklenecek)</p>
         `,
-        author: 'BENİM TELEVİZYONUM',
+        author: 'BOLVITAMIN',
         date: '5 KASIM 2025',
         readTime: '3 dk'
     },
@@ -29,7 +29,7 @@ export const BLOG_POSTS: BlogEntry[] = [
 
             <p class="mb-6 font-bold text-yellow-400">DEVAMI GELECEK...</p>
         `,
-        author: 'BENİM TELEVİZYONUM',
+        author: 'BOLVITAMIN',
         date: '31 OCAK 2025',
         readTime: '2 dk'
     },
@@ -44,7 +44,7 @@ export const BLOG_POSTS: BlogEntry[] = [
 
             <p class="mb-6 font-bold text-yellow-400">DEVAMI GELECEK...</p>
         `,
-        author: 'BENİM TELEVİZYONUM',
+        author: 'BOLVITAMIN',
         date: '16 ARALIK 2024',
         readTime: '4 dk'
     },
@@ -73,7 +73,7 @@ export const BLOG_POSTS: BlogEntry[] = [
 
             <p class="mb-6 font-bold text-yellow-400">DEVAMI GELECEK...</p>
         `,
-        author: 'BENİM TELEVİZYONUM',
+        author: 'BOLVITAMIN',
         date: '9 KASIM 2024',
         readTime: '5 dk'
     },
@@ -92,7 +92,7 @@ export const BLOG_POSTS: BlogEntry[] = [
 
             <p class="mb-6 font-bold text-yellow-400">DEVAMI GELECEK...</p>
         `,
-        author: 'BENİM TELEVİZYONUM',
+        author: 'BOLVITAMIN',
         date: '25 EKİM 2024',
         readTime: '3 dk'
     }

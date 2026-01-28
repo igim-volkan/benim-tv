@@ -93,6 +93,42 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Sync URL -> State (On Mount)
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const blogId = params.get('blogId');
+    if (blogId) {
+      const post = BLOG_POSTS.find(p => p.id === blogId);
+      if (post) {
+        setView('blog'); // Directly set view state since we are inside the component
+        // Note: activeTab sync is handled in handleViewChange but we are bypassing it efficiently here 
+        // or we could call handleViewChange('blog') if we move this effect after the function definition.
+        // However, handleViewChange is defined below. 
+        // Let's just set the states directly as we do for 'view' and 'selectedBlogPost'.
+        // For activeTab, we can ignore it or set it if needed, but 'blog' view uses separate logic in render.
+        setSelectedBlogPost(post);
+      }
+    }
+  }, []);
+
+  // Sync State -> URL (When selectedBlogPost changes)
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (selectedBlogPost) {
+      if (params.get('blogId') !== selectedBlogPost.id) {
+        params.set('blogId', selectedBlogPost.id);
+        const newUrl = `${window.location.pathname}?${params.toString()}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      }
+    } else {
+      if (params.has('blogId')) {
+        params.delete('blogId');
+        const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      }
+    }
+  }, [selectedBlogPost]);
+
   // Sync Data Tab with View (when not admin)
   const handleViewChange = (newView: ViewMode) => {
     setView(newView);
