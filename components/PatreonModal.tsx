@@ -78,7 +78,7 @@ export const PatreonModal: React.FC<PatreonModalProps> = ({ isOpen, onClose }) =
                     </p>
 
                     <a
-                        href="https://www.patreon.com/"
+                        href="https://www.patreon.com/bolvitamin"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full bg-cyan-400 text-black px-8 py-4 text-2xl font-bold hover:bg-white hover:text-cyan-500 transition-colors flex items-center justify-center gap-2 mt-4 font-mono uppercase tracking-wider"
