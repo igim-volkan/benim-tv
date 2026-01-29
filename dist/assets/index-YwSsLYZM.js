@@ -3844,7 +3844,7 @@ This typically indicates that your device does not have a healthy Internet conne
             <p class="mb-6">Her neyse, bu uzun girizgahın ardından esas konumuza dönelim;</p>
 
             <p class="mb-6 font-bold text-yellow-400">DEVAMI GELECEK...</p>
-        `,author:"BOLVITAMIN",date:"OCAK 2025",readTime:"2 dk"},{id:"3",title:"İzlemenize Lüzum Olmayan 17 Film",summary:"Çanakkale’nin plaka kodu 17 olduğu için burada her şeyin adında bir şekilde 17'yi görmek mümkün.",content:`
+        `,author:"BOLVITAMIN",date:"OCAK 2025",readTime:"2 dk",coverImage:"/blog-images/annecy_cristal.jpg"},{id:"3",title:"İzlemenize Lüzum Olmayan 17 Film",summary:"Çanakkale’nin plaka kodu 17 olduğu için burada her şeyin adında bir şekilde 17'yi görmek mümkün.",content:`
             <p class="mb-4">Neden mi 17? Çanakkale’nin plaka kodu 17 olduğu için burada her şeyin adında bir şekilde 17'yi görmek mümkün. Yer yer On Yedi, zaman zaman On7, bazen dümdüz 17, bazense 10 Yedi şeklinde.</p>
             
             <p class="mb-4">Kalelilikte 5. yıla girerken çorbada tuzum bulunsun istedim ve izlemenize hiç gerek olmayan tam 17 filmi listeledim.</p>

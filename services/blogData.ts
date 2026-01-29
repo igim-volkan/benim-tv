@@ -78,7 +78,8 @@ export const BLOG_POSTS: BlogEntry[] = [
         `,
         author: 'BOLVITAMIN',
         date: 'OCAK 2025',
-        readTime: '2 dk'
+        readTime: '2 dk',
+        coverImage: '/blog-images/annecy_cristal.jpg'
     },
     {
         id: '3',
