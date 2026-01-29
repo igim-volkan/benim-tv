@@ -8,6 +8,17 @@ interface BlogDetailModalProps {
 }
 
 export const BlogDetailModal: React.FC<BlogDetailModalProps> = ({ post, onClose }) => {
+    React.useEffect(() => {
+        if (post) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [post]);
+
     if (!post) return null;
 
     return (
@@ -23,15 +34,27 @@ export const BlogDetailModal: React.FC<BlogDetailModalProps> = ({ post, onClose 
                 </button>
 
                 {/* Article Header */}
-                <div className="bg-neutral-100 text-black p-8 md:p-12 pb-8 border-b-4 border-black">
-                    <div className="flex flex-wrap gap-4 text-sm font-bold opacity-60 mb-4 font-mono uppercase">
-                        <span className="flex items-center gap-1"><Calendar size={14} /> {post.date}</span>
-                        <span className="flex items-center gap-1"><User size={14} /> {post.author}</span>
-                    </div>
+                <div className="bg-neutral-100 text-black border-b-4 border-black">
+                    {post.coverImage && (
+                        <div className="w-full h-64 md:h-96 overflow-hidden border-b-4 border-black relative">
+                            <img
+                                src={post.coverImage}
+                                alt={post.title}
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/10 scanlines pointer-events-none"></div>
+                        </div>
+                    )}
+                    <div className="p-8 md:p-12 pb-8">
+                        <div className="flex flex-wrap gap-4 text-sm font-bold opacity-60 mb-4 font-mono uppercase">
+                            <span className="flex items-center gap-1"><Calendar size={14} /> {post.date}</span>
+                            <span className="flex items-center gap-1"><User size={14} /> {post.author}</span>
+                        </div>
 
-                    <h1 className="text-3xl md:text-5xl font-black leading-tight mb-4 tracking-normal">
-                        {post.title}
-                    </h1>
+                        <h1 className="text-3xl md:text-5xl font-black leading-tight mb-4 tracking-normal">
+                            {post.title}
+                        </h1>
+                    </div>
                 </div>
 
                 {/* Article Content */}

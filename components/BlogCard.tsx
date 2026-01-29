@@ -13,6 +13,18 @@ export const BlogCard: React.FC<BlogCardProps> = ({ post, onClick }) => {
             onClick={() => onClick(post)}
             className="group relative bg-neutral-900 border-2 border-white hover:border-yellow-400 transition-all cursor-pointer overflow-hidden flex flex-col h-full"
         >
+            {/* Cover Image */}
+            {post.coverImage && (
+                <div className="h-48 w-full overflow-hidden border-b border-white relative group-hover:border-yellow-400 transition-colors">
+                    <img
+                        src={post.coverImage}
+                        alt={post.title}
+                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                    />
+                    <div className="absolute inset-0 bg-yellow-400/10 mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </div>
+            )}
+
             {/* Top 'Newspaper' Aesthetic Line */}
             <div className="bg-neutral-800 h-2 w-full border-b border-white group-hover:bg-yellow-400 transition-colors"></div>
 
