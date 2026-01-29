@@ -1,6 +1,6 @@
 import React from 'react';
 import { BlogEntry } from '../types';
-import { X, Calendar, Clock, User } from 'lucide-react';
+import { X, Calendar, Clock, User, ExternalLink } from 'lucide-react';
 
 interface BlogDetailModalProps {
     post: BlogEntry | null;
@@ -69,6 +69,19 @@ export const BlogDetailModal: React.FC<BlogDetailModalProps> = ({ post, onClose 
 
                     <div className="mt-12 pt-8 border-t border-neutral-700 text-center">
                         <span className="text-4xl text-neutral-600">***</span>
+
+                        <div className="mt-8">
+                            <p className="text-neutral-400 mb-4 text-base">Bu içeriği beğendiyseniz, sıradaki filmimi seçmek için Patreon'a göz atabilirsiniz:</p>
+                            <a
+                                href="https://www.patreon.com/bolvitamin"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full bg-cyan-400 text-black px-8 py-4 text-xl font-bold hover:bg-white hover:text-cyan-500 transition-colors flex items-center justify-center gap-2 font-mono uppercase tracking-wider"
+                            >
+                                <span>BİR FİLM ISMARLA (PATREON)</span>
+                                <ExternalLink size={20} />
+                            </a>
+                        </div>
                     </div>
                 </div>
 
