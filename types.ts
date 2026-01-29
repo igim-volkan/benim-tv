@@ -55,4 +55,5 @@ export interface BlogEntry {
   date: string;
   readTime: string;
   coverImage?: string; // Optional URL/Base64
+  order?: number;
 }

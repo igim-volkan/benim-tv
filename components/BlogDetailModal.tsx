@@ -42,7 +42,7 @@ export const BlogDetailModal: React.FC<BlogDetailModalProps> = ({ post, onClose 
                                 alt={post.title}
                                 className="w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-black/10 scanlines pointer-events-none"></div>
+                            <div className="absolute inset-0 bg-black/10 pointer-events-none"></div>
                         </div>
                     )}
                     <div className="p-8 md:p-12 pb-8">

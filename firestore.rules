@@ -17,5 +17,21 @@ service cloud.firestore {
       allow create: if true;
       allow read, delete, update: if request.auth != null;
     }
+
+    // Blog Posts Collection
+    // - Everyone can read
+    // - Only authenticated admins can write
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+
+    // Blog Posts Collection
+    // - Everyone can read
+    // - Only authenticated admins can write
+    match /blog_posts/{postId} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
   }
 }

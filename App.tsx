@@ -14,16 +14,20 @@ import { SurpriseModal } from './components/SurpriseModal';
 import { AdminPanel } from './components/AdminPanel';
 import { AboutModal } from './components/AboutModal';
 import { SuggestionModal } from './components/SuggestionModal';
+import { MovieEntry, SuggestionEntry, BlogEntry, MovieStatus } from './types';
+import { movieService } from './services/movieService';
+import { suggestionService } from './services/suggestionService';
+import { blogService } from './services/blogService';
 import { MovieDetailModal } from './components/MovieDetailModal';
 import { LoginModal } from './components/LoginModal';
 import { BlogCard } from './components/BlogCard';
 import { BlogDetailModal } from './components/BlogDetailModal';
-import { BLOG_POSTS } from './services/blogData';
+
 import { useMovieData } from './hooks/useMovieData';
 import { auth } from './services/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useMovieFilter } from './hooks/useMovieFilter';
-import { MovieEntry, MovieStatus, BlogEntry } from './types';
+
 
 type ViewMode = 'watched' | 'watchlist' | 'admin' | 'blog';
 
@@ -93,23 +97,45 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  // Sync URL -> State (On Mount)
+  // Blog State
+  const [blogPosts, setBlogPosts] = useState<BlogEntry[]>([]);
+
+  // Fetch Blog Posts & Migration
+  // Fetch Blog Posts & Migration
+  const fetchBlogPosts = async () => {
+    try {
+      const posts = await blogService.getBlogPosts();
+      if (posts.length === 0) {
+        console.log("No blog posts found, migrating static data...");
+        // Dynamic import to avoid bundling if not needed, but here we need it for migration
+        const { BLOG_POSTS } = await import('./services/blogData');
+        await blogService.migrateStaticPosts(BLOG_POSTS);
+        const migratedPosts = await blogService.getBlogPosts();
+        setBlogPosts(migratedPosts);
+      } else {
+        setBlogPosts(posts);
+      }
+    } catch (error) {
+      console.error("Error fetching blog posts:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchBlogPosts();
+  }, []);
+
+  // Sync URL -> State (On Mount & Update)
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const blogId = params.get('blogId');
-    if (blogId) {
-      const post = BLOG_POSTS.find(p => p.id === blogId);
+    if (blogId && blogPosts.length > 0) {
+      const post = blogPosts.find(p => p.id === blogId);
       if (post) {
-        setView('blog'); // Directly set view state since we are inside the component
-        // Note: activeTab sync is handled in handleViewChange but we are bypassing it efficiently here 
-        // or we could call handleViewChange('blog') if we move this effect after the function definition.
-        // However, handleViewChange is defined below. 
-        // Let's just set the states directly as we do for 'view' and 'selectedBlogPost'.
-        // For activeTab, we can ignore it or set it if needed, but 'blog' view uses separate logic in render.
+        setView('blog');
         setSelectedBlogPost(post);
       }
     }
-  }, []);
+  }, [blogPosts]);
 
   // Sync State -> URL (When selectedBlogPost changes)
   React.useEffect(() => {
@@ -252,11 +278,13 @@ export default function App() {
             onUpdate={async (id, data) => await updateMovieStatus(id, data.status!, data)}
             suggestions={suggestions}
             onDeleteSuggestion={deleteSuggestion}
+            blogPosts={blogPosts}
+            onBlogUpdate={fetchBlogPosts}
           />
         ) : view === 'blog' ? (
           // BLOG VIEW
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {BLOG_POSTS.map(post => (
+            {blogPosts.map(post => (
               <BlogCard
                 key={post.id}
                 post={post}
