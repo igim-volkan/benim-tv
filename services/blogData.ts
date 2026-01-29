@@ -2,6 +2,56 @@ import { BlogEntry } from '../types';
 
 export const BLOG_POSTS: BlogEntry[] = [
     {
+        id: '8',
+        title: 'Jenerik Bitti, Çile Başladı: Hollywood Yıldızlarının Şaşırtan Yeni Meslekleri',
+        summary: 'Vaktiyle dünyayı kurtaran o dev isimler, jenerik bittikten sonra hangi şantiyede ter döküyor, hangi dükkanda kepenk açıyor? İşte Hollywood’un gizli emeklilik dosyası.',
+        content: `
+            <p class="mb-4">Vaktiyle dünyayı kurtaran o dev isimler, jenerik bittikten sonra hangi şantiyede ter döküyor, hangi dükkanda kepenk açıyor? İşte Hollywood’un gizli emeklilik dosyası.</p>
+            
+            <h3 class="text-xl font-bold text-yellow-400 mb-2 mt-6">WALL-E: Şantiyelerin Sessiz Fedaisi, "Küpçü Süleyman"</h3>
+            <img src="/blog-images/wall_e_construction.jpg" alt="WALL-E İnşaatta" class="w-full h-auto rounded-lg mb-2 border border-neutral-700" />
+            <p class="mb-4 text-sm text-neutral-500 italic">Akşam paydosunda çayını yudumlarken...</p>
+            
+            <p class="mb-4">Güneş panelleriyle şarj olup dünyayı kurtardığı günler çok geride kaldı. İnsanlık dünyaya döndüğünde gördü ki; her yer inşaat, her yer kentsel dönüşüm. WALL-E’nin o meşhur çöp sıkıştırma yeteneği, büyük müteahhitlerin iştahını kabarttı. Şimdi onu, sabah ezanıyla birlikte şantiyeye giren, üzerinde yağlı bir amele yeleği ve güneşten solmuş sarı bir baretle görüyoruz.</p>
+
+            <p class="mb-4">Diğer işçiler ona "Küpçü Süleyman" diyor. Neden mi? Çünkü yıkılan binaların molozlarını saniyeler içinde tertemiz küpler haline getirip kamyonlara yüklüyor. Öğle molasında diğer işçiler çay ocağında kağıt oynarken, bizimki bir köşede pas sökücü spreyini sıkıp güneşin altında "akü tazelemeye" çalışıyor. Eskiden binaların arasından hüzünlü hüzünlü bakardı, şimdi ise "Usta, çimento nerede kaldı?" dercesine o meşhur dijital sesiyle vinç operatörlerine sinyal veriyor.</p>
+
+            <p class="mb-4">En büyük derdi ise iş güvenliği uzmanları. Paletleri aşındığı için sürekli "Arıza bildirimi" veriyorlar ama o, bir damla 10-40 numara motor yağıyla akşama kadar moloz küplemeye devam ediyor. Akşam olduğunda ise şantiye konteynerinin arkasında, paslı bir tenekenin içinde yaktıkları ateşin başında oturup, eski püskü kaydedicisinden "Hello, Dolly!" yerine Müslüm Gürses çalıyor. Hayat zor, dünya beton ama o hala o küplerin arasına gizlice bir parça yeşillik sıkıştırmaktan vazgeçmiyor.</p>
+
+            <h3 class="text-xl font-bold text-yellow-400 mb-2 mt-6">Vahşi Doğanın Aristokratıydı, Mahallenin 'Tilki Abisi' Oldu</h3>
+            <img src="/blog-images/mr_fox.jpg" alt="Mr. Fox Kahvehanede" class="w-full h-auto rounded-lg mb-2 border border-neutral-700" />
+            <p class="mb-4 text-sm text-neutral-500 italic">"Sen artık bir esnafsın Mr. Fox!"</p>
+
+            <p class="mb-4">Vaktiyle çiftçileri parmağında oynatan, her soygunu bir sanat eserine dönüştüren o "Yaman Tilki", şimdi bir Ege kasabasında gündelik işlere gidiyor. O meşhur turuncu kadife ceketi artık dirseklerinden yamalı, cebinde ise yarım bir paket ucuz tütün var. "Vahşi bir hayvan mıyım, yoksa bir aile babası mı?" sorusuna cevabı hayat çok sert vermiş: "Sen artık bir esnafsın Mr. Fox!"</p>
+
+            <p class="mb-4">Şimdilerde onu yerel bir tavuk çiftliğinin kapısında, "Güvenlik Danışmanı" kartvizitiyle görebilirsiniz. Çiftlik sahibi, "Tilkiye kümesi emanet etmek" deyimini ciddiye almış ama Mr. Fox artık o eski heyecanında değil. Emeklilik ikramiyesini bir tarla işine batırdığı için, geceleri elinde fenerle kümesin etrafında turlayıp kendi hemşehrilerini (diğer tilkileri) kovalıyor. Arada bir eski alışkanlıkla parmaklarını şıklatıp o meşhur ıslığını çalıyor ama tek gelen tepki, uykusu bölünen bir horozun küfrü oluyor. Akşamları kahvehanede okeye dördüncü ararken, "Biz zamanında üç büyük çiftçiyi aynı gece paketledik..." diye başladığı hikayeleri kimse dinlemiyor; herkes ona "Amma salladın be Tilki abi, bas okeyi!" diyor.</p>
+
+            <h3 class="text-xl font-bold text-yellow-400 mb-2 mt-6">Cybertron'un Gururuydu, İkitelli'nin 'Sarı Ustası' Oldu</h3>
+            <img src="/blog-images/bumblebee.jpg" alt="Bumblebee Oto Kaporta" class="w-full h-auto rounded-lg mb-2 border border-neutral-700" />
+            <p class="mb-4 text-sm text-neutral-500 italic">"Usta, bu araba kendi kendine konuşuyor!"</p>
+
+            <p class="mb-4">Galaksiler arası savaş bitti, Cybertron kurtuldu, Optimus Prime emekli olup bir kenara çekildi. Peki ya bizim sadık sarı dev? Dünya’da kalıp "insanlara yardım etme" sözünü biraz fazla ciddiye almış olacak ki, kendini bir anda İkitelli Organize Sanayi Bölgesi'nde, "Bumblebee Oto Kaporta & Radyatör" dükkanını açarken buldu.</p>
+
+            <p class="mb-4">Artık o havalı Camaro formuna sadece pazar günleri, o da hanımı (eğer bir gün bulursa) gezmeye götürmek için giriyor. Hafta içi ise dükkanın önünde, üzerine devasa bir mavi iş önlüğü çekmiş, elinde pürmüzle kaza yapmış Broadway'lerin şaselerini düzeltiyor. Ses modülü hala tamir edilemediği için müşterilerle radyo frekanslarından şarkılarla anlaşıyor; pazarlık yaparken Müslüm Gürses’ten "Yıkıla Yıkıla" çalınca müşteri durumun ciddiyetini anlayıp indirimi kapıyor.</p>
+
+            <p class="mb-4">En büyük sıkıntısı ise çırak bulamamak. "Usta, bu araba kendi kendine konuşuyor!" diyen çıraklar kaçtığı için bütün iş ona kalıyor. Akşamları dükkanın kepengini indirirken eklemlerinden gelen gıcırtıları "WD-40" ile susturmaya çalışıyor. Eski günlerdeki gibi dünyayı kurtarmıyor belki ama, hararet yapmış bir kamyoneti yola döndürmenin verdiği o küçük ama samimi gururla, dükkanın arkasındaki konteynerde yağlı elleriyle mısırını patlatıp eski savaş anılarını içeren VHS kasetleri izliyor.</p>
+
+            <h3 class="text-xl font-bold text-yellow-400 mb-2 mt-6">Şanzelize Düğün Salonu’nda Bir "Metal Yorgunu"</h3>
+            <img src="/blog-images/terminator.jpg" alt="Terminator Güvenlik" class="w-full h-auto rounded-lg mb-2 border border-neutral-700" />
+            <p class="mb-4 text-sm text-neutral-500 italic">"Damsız girilmez dedim!"</p>
+
+            <p class="mb-4">Aslında her şey kıyametin bir türlü kopmamasıyla başladı. John Connor büyüdü, Skynet hiç kurulmadı; T-800 ise elinde işlevsiz bir "geleceği kurtarma" göreviyle ortada kaldı. Bir süre inşaatlarda ağır yük taşıdı ama eklemleri gıcırdayınca daha az hareket edeceği bir işe, özel güvenliğe geçti.</p>
+
+            <p class="mb-4">Şimdi onu Bağcılar tarafındaki Şanzelize Düğün Salonu’nun kapısında görebilirsiniz. Üzerinde dikişleri zorlanan, ter kokan beyaz bir gömlek... Gözündeki o meşhur siyah gözlükleri artık havalı durmak için değil, kaynak yaparken bozulan ve sürekli kırmızı parlayan sol gözünü gizlemek için takıyor. Gece boyunca tek yaptığı, içeriye damsız girmeye çalışan gençleri "I'll be back" soğukluğuyla ama bıkkın bir sesle geri çevirmek.</p>
+
+            <p class="mb-4">Takı töreninde altın kesesinin başında beklerken o kızılötesi tarayıcılarıyla hala potansiyel tehditleri hesaplıyor ama tek gördüğü; yorgunluktan ağlayan bebekler ve gürültüden patlamış hoparlörler. Mesai bitip herkes dağıldığında, sandalyelerin üzerine devrilip bir bardak soğumuş çay içiyor. Geleceği kurtarmak kolaydı, asıl zor olan bu bitmek bilmeyen düğünler ve insan dırdırıymış; anladı.</p>
+        `,
+        author: 'BOLVITAMIN',
+        date: 'OCAK 2026',
+        readTime: '3 dk',
+        coverImage: '/blog-images/wall_e_construction.jpg'
+    },
+    {
         id: '1',
         title: 'Kötü Film İzlemek İçin Hayat Çok Kısa Diye Düşünenlerin Kesinlikle Kaçırması Gereken 10 Şaheser',
         summary: 'Yapay zekanın hayatımıza koşar adım girmesini takiben artık gerçek iyiyi de gerçek kötüyü de bulmak oldukça zorlaşıyor.',
