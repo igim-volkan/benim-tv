@@ -22,10 +22,10 @@ export const useMovieData = () => {
 
     // Load from Firestore (Real-time)
     useEffect(() => {
-        console.log("Firestore: Başlatılıyor...");
+        console.log("[useMovieData] Firestore: Filmleri yükleme başlatılıyor...");
         const q = query(collection(db, "movies"), orderBy("watchedDate", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            console.log("Firestore: Veri geldi, doküman sayısı:", snapshot.docs.length);
+            console.log("[useMovieData] Firestore: Veri geldi, doküman sayısı:", snapshot.docs.length);
             const fetchedMovies: MovieEntry[] = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -33,12 +33,16 @@ export const useMovieData = () => {
             setMovies(fetchedMovies);
             setIsLoading(false);
         }, (error) => {
-            console.error("Firestore Error (movies):", error);
+            console.error("[useMovieData] Firestore Error (movies):", error.code, error.message);
             setIsLoading(false);
         });
 
-        return () => unsubscribe();
+        return () => {
+            console.log("[useMovieData] Firestore: Unsubscribing from movies collection");
+            unsubscribe();
+        };
     }, []);
+
 
     // Suggestions Sync (Only if Admin)
     const [suggestions, setSuggestions] = useState<SuggestionEntry[]>([]);

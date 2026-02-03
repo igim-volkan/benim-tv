@@ -12,6 +12,20 @@ const firebaseConfig = {
     measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
+// BASIC VALIDATION
+console.log("[Firebase] Yapılandırma kontrol ediliyor...");
+const missingVars = Object.entries(firebaseConfig)
+    .filter(([key, value]) => !value && key !== 'measurementId')
+    .map(([key]) => `VITE_FIREBASE_${key.replace(/[A-Z]/g, letter => `_${letter.toUpperCase()}`).toUpperCase()}`);
+
+if (missingVars.length > 0) {
+    console.error("[Firebase] EKSİK ÇEVRE DEĞİŞKENLERİ:", missingVars.join(", "));
+    console.warn("[Firebase] Uygulama düzgün çalışmayabilir. Lütfen .env dosyasını kontrol edin.");
+} else {
+    console.log("[Firebase] Yapılandırma geçerli görünüyor.");
+}
+
+
 import { getAuth } from "firebase/auth";
 
 // Initialize Firebase
