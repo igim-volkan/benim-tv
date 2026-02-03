@@ -59,7 +59,7 @@ export const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose, onS
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    className="w-full bg-black border-2 border-neutral-700 p-3 text-white font-bold focus:border-yellow-400 outline-none transition-colors"
+                                    className="w-full bg-black border-2 border-neutral-700 p-3 text-white font-bold focus:border-yellow-400 outline-none transition-colors font-inter normal-case"
                                     required
                                 />
                             </div>
@@ -69,7 +69,7 @@ export const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose, onS
                                 <textarea
                                     value={summary}
                                     onChange={(e) => setSummary(e.target.value)}
-                                    className="w-full bg-black border-2 border-neutral-700 p-3 text-white h-24 focus:border-yellow-400 outline-none transition-colors resize-none"
+                                    className="w-full bg-black border-2 border-neutral-700 p-3 text-white h-24 focus:border-yellow-400 outline-none transition-colors resize-none font-inter normal-case"
                                     required
                                 />
                             </div>
@@ -81,7 +81,7 @@ export const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose, onS
                                         type="text"
                                         value={author}
                                         onChange={(e) => setAuthor(e.target.value)}
-                                        className="w-full bg-black border-2 border-neutral-700 p-3 text-white font-mono focus:border-yellow-400 outline-none transition-colors"
+                                        className="w-full bg-black border-2 border-neutral-700 p-3 text-white focus:border-yellow-400 outline-none transition-colors font-inter normal-case"
                                         required
                                     />
                                 </div>
@@ -128,7 +128,7 @@ export const AddBlogModal: React.FC<AddBlogModalProps> = ({ isOpen, onClose, onS
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
-                                className="w-full flex-1 bg-black border-2 border-neutral-700 p-3 text-white font-mono text-sm focus:border-yellow-400 outline-none transition-colors resize-none leading-relaxed"
+                                className="w-full flex-1 bg-black border-2 border-neutral-700 p-3 text-white text-sm focus:border-yellow-400 outline-none transition-colors resize-none leading-relaxed font-inter normal-case"
                                 placeholder="<p>Paragraf...</p>"
                                 required
                             />

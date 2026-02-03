@@ -288,7 +288,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                                                         <div className="text-sm text-neutral-400 font-mono mb-2">
                                                             {post.date} • {post.author}
                                                         </div>
-                                                        <div className="text-neutral-300 line-clamp-2 text-sm">
+                                                        <div className="text-neutral-300 line-clamp-2 text-sm font-inter">
                                                             {post.summary}
                                                         </div>
                                                     </div>
