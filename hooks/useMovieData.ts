@@ -22,10 +22,8 @@ export const useMovieData = () => {
 
     // Load from Firestore (Real-time)
     useEffect(() => {
-        console.log("[useMovieData] Firestore: Filmleri yükleme başlatılıyor...");
         const q = query(collection(db, "movies"), orderBy("watchedDate", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            console.log("[useMovieData] Firestore: Veri geldi, doküman sayısı:", snapshot.docs.length);
             const fetchedMovies: MovieEntry[] = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
@@ -38,7 +36,6 @@ export const useMovieData = () => {
         });
 
         return () => {
-            console.log("[useMovieData] Firestore: Unsubscribing from movies collection");
             unsubscribe();
         };
     }, []);
@@ -50,7 +47,6 @@ export const useMovieData = () => {
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-            console.log("Hooks Auth Check:", user?.email);
             // Restrict admin access to a specific email
             setIsAdmin(!!user && user.email === 'voleksi@gmail.com');
         });

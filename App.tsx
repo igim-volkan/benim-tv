@@ -89,9 +89,7 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   React.useEffect(() => {
-    console.log("Auth: Başlatılıyor...");
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth: Kullanıcı durumu değişti:", user?.email);
       // Restrict admin access to a specific email
       setIsAdminLoggedIn(!!user && user.email === 'voleksi@gmail.com');
     });
@@ -129,11 +127,9 @@ export default function App() {
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const blogId = params.get('blogId');
-    console.log("[App] URL parametreleri kontrol ediliyor, blogId:", blogId);
     if (blogId && blogPosts.length > 0) {
       const post = blogPosts.find(p => p.id === blogId);
       if (post) {
-        console.log("[App] Blog detayına yönlendiriliyor:", post.title);
         setView('blog');
         setSelectedBlogPost(post);
       } else {
@@ -163,7 +159,6 @@ export default function App() {
 
   // Sync Data Tab with View (when not admin)
   const handleViewChange = (newView: ViewMode) => {
-    console.log("View Değişiyor:", newView);
     setView(newView);
     if (newView === 'watched' || newView === 'watchlist') {
       setActiveTab(newView);
@@ -304,18 +299,10 @@ export default function App() {
           <div className="flex flex-col items-center justify-center h-[50vh] text-center">
             <Loader className="w-16 h-16 text-yellow-400 animate-spin mb-4" />
             <h2 className="text-3xl text-white animate-pulse teletext-shadow">BULUT BAĞLANTISI KURULUYOR...</h2>
-            <div className="mt-4 space-y-2">
-              <p className="text-neutral-500 font-mono text-sm tracking-widest uppercase">SİNYAL ARANIYOR...</p>
-              <p className="text-blue-400 font-mono text-xs animate-pulse">FIRESTORE DATA FETCHING: IN_PROGRESS</p>
-            </div>
-
-            <div className="mt-12 p-4 border border-neutral-800 max-w-md">
-              <p className="text-neutral-600 text-xs italic">
-                EĞER BU EKRAN 10 SANİYEDEN FAZLA SÜRERSE, LÜTFEN İNTERNET BAĞLANTINIZI VEYA .ENV DOSYANIZI KONTROL EDİNİZ.
-              </p>
-            </div>
+            <p className="text-neutral-500 mt-2 font-mono text-sm tracking-widest uppercase">SİNYAL ARANIYOR...</p>
           </div>
         ) : (
+
 
           <>
             {currentTabMovies.length > 0 && (

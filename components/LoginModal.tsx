@@ -30,11 +30,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
 
         } catch (err: any) {
             console.error("Login Error Details:", err);
-            const errorCode = err.code || "unknown";
-            setError(`Giriş başarısız. (${errorCode})`);
+            setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
         } finally {
             setIsLoading(false);
         }
+
     };
 
     return (
