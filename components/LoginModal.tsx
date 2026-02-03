@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../services/firebase';
-import { Lock, X } from 'lucide-react';
+import { Lock, X, Eye, EyeOff } from 'lucide-react';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -14,6 +14,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
 
     if (!isOpen) return null;
 
@@ -23,12 +24,14 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
         setError('');
 
         try {
-            await signInWithEmailAndPassword(auth, email, password);
+            await signInWithEmailAndPassword(auth, email.trim(), password.trim());
             onLoginSuccess();
             onClose();
+
         } catch (err: any) {
-            console.error("Login Error:", err);
-            setError("Giriş başarısız. Bilgilerinizi kontrol edin.");
+            console.error("Login Error Details:", err);
+            const errorCode = err.code || "unknown";
+            setError(`Giriş başarısız. (${errorCode})`);
         } finally {
             setIsLoading(false);
         }
@@ -64,7 +67,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-black border border-neutral-700 text-white p-3 focus:border-yellow-400 focus:outline-none transition-colors"
+                            className="w-full bg-black border border-neutral-700 text-white p-3 focus:border-yellow-400 focus:outline-none transition-colors !text-transform-none"
+                            style={{ textTransform: 'none' }}
                             placeholder="yonetici@benimtv.com"
                             required
                         />
@@ -72,14 +76,24 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, onLogin
 
                     <div>
                         <label className="block text-neutral-400 text-sm font-bold mb-2">ŞİFRE</label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-black border border-neutral-700 text-white p-3 focus:border-yellow-400 focus:outline-none transition-colors"
-                            placeholder="••••••••"
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full bg-black border border-neutral-700 text-white p-3 pr-12 focus:border-yellow-400 focus:outline-none transition-colors !text-transform-none"
+                                style={{ textTransform: 'none' }}
+                                placeholder="••••••••"
+                                required
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-white"
+                            >
+                                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                            </button>
+                        </div>
                     </div>
 
                     <button

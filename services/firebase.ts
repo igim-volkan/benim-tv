@@ -23,7 +23,10 @@ if (missingVars.length > 0) {
     console.warn("[Firebase] Uygulama düzgün çalışmayabilir. Lütfen .env dosyasını kontrol edin.");
 } else {
     console.log("[Firebase] Yapılandırma geçerli görünüyor.");
+    console.log("[Firebase] Project ID:", firebaseConfig.projectId);
+    console.log("[Firebase] API Key (İpucu):", firebaseConfig.apiKey?.substring(0, 7) + "...");
 }
+
 
 
 import { getAuth } from "firebase/auth";
