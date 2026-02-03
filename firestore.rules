@@ -2,12 +2,17 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
     // Movies Collection
     // - Everyone can read (to see the list)
     // - Only authenticated admins can write (add, edit, delete, approve)
     match /movies/{movieId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated();
     }
     
     // Suggestions Collection
@@ -15,23 +20,15 @@ service cloud.firestore {
     // - Only authenticated admins can read all suggestions or delete them
     match /suggestions/{suggestionId} {
       allow create: if true;
-      allow read, delete, update: if request.auth != null;
+      allow read, delete, update: if isAuthenticated();
     }
-
+    
     // Blog Posts Collection
     // - Everyone can read
     // - Only authenticated admins can write
     match /blog_posts/{postId} {
       allow read: if true;
-      allow write: if request.auth != null;
-    }
-
-    // Blog Posts Collection
-    // - Everyone can read
-    // - Only authenticated admins can write
-    match /blog_posts/{postId} {
-      allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAuthenticated();
     }
   }
 }
