@@ -163,6 +163,8 @@ export default function App() {
     if (newView === 'watched' || newView === 'watchlist') {
       setActiveTab(newView);
     }
+    // Reset pagination to Page 1 when switching views
+    hookPagination.setCurrentPage(1);
   };
 
   // Move to Watched State
