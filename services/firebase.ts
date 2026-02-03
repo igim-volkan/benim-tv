@@ -16,6 +16,12 @@ import { getAuth } from "firebase/auth";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+let analytics = null;
+try {
+    analytics = getAnalytics(app);
+} catch (e) {
+    console.warn("Firebase Analytics could not be initialized:", e);
+}
+export { analytics };
 export const db = getFirestore(app);
 export const auth = getAuth(app);

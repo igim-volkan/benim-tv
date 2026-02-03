@@ -89,7 +89,9 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   React.useEffect(() => {
+    console.log("Auth: Başlatılıyor...");
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth: Kullanıcı durumu değişti:", user?.email);
       // Restrict admin access to a specific email
       setIsAdminLoggedIn(!!user && user.email === 'voleksi@gmail.com');
     });
@@ -156,8 +158,9 @@ export default function App() {
 
   // Sync Data Tab with View (when not admin)
   const handleViewChange = (newView: ViewMode) => {
+    console.log("View Değişiyor:", newView);
     setView(newView);
-    if (newView !== 'admin') {
+    if (newView === 'watched' || newView === 'watchlist') {
       setActiveTab(newView);
     }
   };
