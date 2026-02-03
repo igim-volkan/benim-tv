@@ -41,7 +41,8 @@ export const useMovieData = () => {
 
     useEffect(() => {
         const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
-            setIsAdmin(!!user);
+            // Restrict admin access to a specific email
+            setIsAdmin(!!user && user.email === 'voleksi@gmail.com');
         });
         return () => unsubscribeAuth();
     }, []);

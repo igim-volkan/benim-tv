@@ -15,8 +15,6 @@ import { AdminPanel } from './components/AdminPanel';
 import { AboutModal } from './components/AboutModal';
 import { SuggestionModal } from './components/SuggestionModal';
 import { MovieEntry, SuggestionEntry, BlogEntry, MovieStatus } from './types';
-import { movieService } from './services/movieService';
-import { suggestionService } from './services/suggestionService';
 import { blogService } from './services/blogService';
 import { MovieDetailModal } from './components/MovieDetailModal';
 import { LoginModal } from './components/LoginModal';
@@ -92,7 +90,8 @@ export default function App() {
 
   React.useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setIsAdminLoggedIn(!!user);
+      // Restrict admin access to a specific email
+      setIsAdminLoggedIn(!!user && user.email === 'voleksi@gmail.com');
     });
     return () => unsubscribe();
   }, []);
