@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Tv, Ticket, Search, Loader } from 'lucide-react';
+import { Sparkles, Tv, Ticket, Search, Loader, BarChart3 } from 'lucide-react';
 import { AddMovieModal } from './components/AddMovieModal';
 import { MovieCard } from './components/MovieCard';
 import { WatchlistCard } from './components/WatchlistCard';
@@ -20,6 +20,7 @@ import { MovieDetailModal } from './components/MovieDetailModal';
 import { LoginModal } from './components/LoginModal';
 import { BlogCard } from './components/BlogCard';
 import { BlogDetailModal } from './components/BlogDetailModal';
+import { StatisticsModal } from './components/StatisticsModal';
 
 import { useMovieData } from './hooks/useMovieData';
 import { auth } from './services/firebase';
@@ -79,6 +80,7 @@ export default function App() {
   const [isAboutOpen, setIsAboutOpen] = useState(false);
 
   const [isSuggestionOpen, setIsSuggestionOpen] = useState(false);
+  const [isStatisticsOpen, setIsStatisticsOpen] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<MovieEntry | null>(null);
 
   // Blog State
@@ -467,6 +469,13 @@ export default function App() {
             ?
           </button>
           <button
+            onClick={() => setIsStatisticsOpen(true)}
+            className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
+            title="İSTATİSTİKLER"
+          >
+            <BarChart3 className="w-6 h-6" />
+          </button>
+          <button
             onClick={() => setIsSuggestionOpen(true)}
             className="bg-neutral-800 text-neutral-500 font-bold text-lg px-4 border-2 border-transparent hover:border-white hover:text-white transition-colors flex items-center justify-center"
             title="ONERI FORMU"
@@ -519,6 +528,12 @@ export default function App() {
         onClose={() => setIsAboutOpen(false)}
         watchedCount={approvedMovies.filter(m => m.status === 'watched').length}
         watchlistCount={approvedMovies.filter(m => m.status === 'watchlist').length}
+      />
+
+      <StatisticsModal
+        isOpen={isStatisticsOpen}
+        onClose={() => setIsStatisticsOpen(false)}
+        movies={approvedMovies}
       />
 
       <SuggestionModal

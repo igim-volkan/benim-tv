@@ -16,7 +16,7 @@ interface AddMovieModalProps {
 const GENRES = [
   "Aksiyon", "Bilim Kurgu", "Drama", "Komedi", "Korku",
   "Macera", "Romantik", "Gerilim", "Animasyon", "Belgesel",
-  "Fantastik", "Suc", "Gizem", "Savas", "Western"
+  "Fantastik", "Suç", "Gizem", "Savaş", "Western"
 ];
 
 export const AddMovieModal: React.FC<AddMovieModalProps> = ({

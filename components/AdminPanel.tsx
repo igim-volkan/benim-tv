@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { MovieEntry, AddMovieFormData, SuggestionEntry, BlogEntry } from '../types';
-import { Check, Edit, Trash2, X, Eye, Plus, FileText } from 'lucide-react';
+import { Check, Edit, Trash2, X, Eye, Plus, FileText, Search } from 'lucide-react';
 import { AddMovieModal } from './AddMovieModal';
 import { AddBlogModal } from './AddBlogModal';
 import { blogService } from '../services/blogService';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
+
+const ITEMS_PER_PAGE = 50;
 
 interface AdminPanelProps {
     movies: MovieEntry[];
@@ -19,6 +21,8 @@ interface AdminPanelProps {
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDelete, onUpdate, suggestions, onDeleteSuggestion, blogPosts, onBlogUpdate }) => {
     const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog'>('pending');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
 
     // Local state for draggable list
     const [localBlogPosts, setLocalBlogPosts] = useState<BlogEntry[]>([]);
@@ -26,6 +30,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
     useEffect(() => {
         setLocalBlogPosts(blogPosts);
     }, [blogPosts]);
+
+    // Reset page when tab or search changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [activeTab, searchTerm]);
 
     const handleDragEnd = async (result: DropResult) => {
         if (!result.destination) return;
@@ -184,10 +193,43 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
         </div>
     );
 
-    const moviesDisplay = activeTab === 'pending' ? pendingMovies : approvedMovies;
+    const moviesDisplay = (activeTab === 'pending' ? pendingMovies : approvedMovies).filter(m => {
+        if (!searchTerm) return true;
+        const term = searchTerm.toLowerCase();
+        return (
+            m.title.toLowerCase().includes(term) ||
+            m.director.toLowerCase().includes(term) ||
+            m.genre.some(g => g.toLowerCase().includes(term))
+        );
+    });
+
+    const totalPages = Math.ceil(moviesDisplay.length / ITEMS_PER_PAGE);
+    const paginatedMovies = moviesDisplay.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
+    );
 
     return (
         <div className="space-y-6">
+            {/* Search Bar */}
+            {(activeTab === 'pending' || activeTab === 'approved') && (
+                <div className="flex items-center bg-neutral-900 border-2 border-white p-2 mb-4">
+                    <Search className="text-neutral-500 mr-2" />
+                    <input
+                        type="text"
+                        placeholder="FİLM, YÖNETMEN VEYA TÜR ARA..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="bg-transparent text-white w-full outline-none font-bold placeholder-neutral-600 uppercase"
+                    />
+                    {searchTerm && (
+                        <button onClick={() => setSearchTerm('')} className="text-red-500 font-bold hover:text-red-400">
+                            TEMİZLE
+                        </button>
+                    )}
+                </div>
+            )}
+
             {/* Top Tabs */}
             <div className="flex gap-4 border-b-2 border-white pb-2 mb-6 overflow-x-auto">
                 <button
@@ -328,48 +370,73 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                         {activeTab === 'pending' ? 'HER SEY YOLUNDA' : 'ARŞİV BOŞ'}
                     </h2>
                     <p className="text-xl text-white">
-                        {activeTab === 'pending' ? 'ONAY BEKLEYEN KAYIT YOK.' : 'HENÜZ ONAYLANMIŞ KAYIT YOK.'}
+                        {searchTerm ? 'ARAMA SONUCU BULUNAMADI.' : (activeTab === 'pending' ? 'ONAY BEKLEYEN KAYIT YOK.' : 'HENÜZ ONAYLANMIŞ KAYIT YOK.')}
                     </p>
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {moviesDisplay.map(movie => (
-                        <div key={movie.id} className="border-2 border-white bg-neutral-900 p-4 flex gap-4 items-start">
-                            {/* Poster Thumb */}
-                            <div className="w-24 aspect-[2/3] bg-black flex-shrink-0 border border-neutral-700">
-                                {movie.posterBase64 ? (
-                                    <img src={movie.posterBase64} alt={movie.title} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="flex items-center justify-center h-full text-2xl">🎬</div>
-                                )}
-                            </div>
-
-                            {/* Info */}
-                            <div className="flex-1 min-w-0">
-                                <h3 className="text-xl font-bold text-yellow-400 truncate">{movie.title}</h3>
-                                <div className="text-sm text-neutral-400 font-bold mb-2">
-                                    {movie.year} • {movie.director}
-                                </div>
-                                <div className="text-xs text-neutral-500 mb-2 line-clamp-2">
-                                    {movie.summary}
-                                </div>
-                                <div className="flex gap-2 text-xs font-bold">
-                                    <span className={`px-2 py-1 ${movie.status === 'watched' ? 'bg-red-900 text-red-200' : 'bg-green-900 text-green-200'}`}>
-                                        {movie.status === 'watched' ? 'İZLENDİ' : 'İZLENECEK'}
-                                    </span>
-                                    {movie.userRating && (
-                                        <span className="bg-yellow-900 text-yellow-200 px-2 py-1">
-                                            ★ {movie.userRating}
-                                        </span>
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {paginatedMovies.map(movie => (
+                            <div key={movie.id} className="border-2 border-white bg-neutral-900 p-4 flex gap-4 items-start">
+                                {/* Poster Thumb */}
+                                <div className="w-24 aspect-[2/3] bg-black flex-shrink-0 border border-neutral-700">
+                                    {movie.posterBase64 ? (
+                                        <img src={movie.posterBase64} alt={movie.title} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <div className="flex items-center justify-center h-full text-2xl">🎬</div>
                                     )}
                                 </div>
-                            </div>
 
-                            {/* Actions */}
-                            {renderActions(movie)}
+                                {/* Info */}
+                                <div className="flex-1 min-w-0">
+                                    <h3 className="text-xl font-bold text-yellow-400 truncate">{movie.title}</h3>
+                                    <div className="text-sm text-neutral-400 font-bold mb-2">
+                                        {movie.year} • {movie.director}
+                                    </div>
+                                    <div className="text-xs text-neutral-500 mb-2 line-clamp-2">
+                                        {movie.summary}
+                                    </div>
+                                    <div className="flex gap-2 text-xs font-bold">
+                                        <span className={`px-2 py-1 ${movie.status === 'watched' ? 'bg-red-900 text-red-200' : 'bg-green-900 text-green-200'}`}>
+                                            {movie.status === 'watched' ? 'İZLENDİ' : 'İZLENECEK'}
+                                        </span>
+                                        {movie.userRating && (
+                                            <span className="bg-yellow-900 text-yellow-200 px-2 py-1">
+                                                ★ {movie.userRating}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Actions */}
+                                {renderActions(movie)}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Pagination Controls */}
+                    {totalPages > 1 && (
+                        <div className="flex justify-center items-center gap-4 mt-8 font-bold">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className={`px-4 py-2 border-2 border-white ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:text-black'}`}
+                            >
+                                &lt; ÖNCEKİ
+                            </button>
+                            <span className="text-yellow-400 text-xl">
+                                SAYFA {currentPage} / {totalPages}
+                            </span>
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className={`px-4 py-2 border-2 border-white ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:text-black'}`}
+                            >
+                                SONRAKİ &gt;
+                            </button>
                         </div>
-                    ))}
-                </div>
+                    )}
+                </>
             ))}
 
             {/* MODALS */}
