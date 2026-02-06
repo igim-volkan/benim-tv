@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { MovieEntry, AddMovieFormData, SuggestionEntry, BlogEntry } from '../types';
-import { Check, Edit, Trash2, X, Eye, Plus, FileText, Search } from 'lucide-react';
+import { MovieEntry, AddMovieFormData, SuggestionEntry, BlogEntry, Order } from '../types';
+import { Check, Edit, Trash2, X, Eye, Plus, FileText, Search, ShoppingBag, Clock, User } from 'lucide-react';
 import { AddMovieModal } from './AddMovieModal';
 import { AddBlogModal } from './AddBlogModal';
 import { blogService } from '../services/blogService';
+import { shopService } from '../services/shopService';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 
 const ITEMS_PER_PAGE = 50;
@@ -20,9 +21,31 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDelete, onUpdate, suggestions, onDeleteSuggestion, blogPosts, onBlogUpdate }) => {
-    const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog'>('pending');
+    const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog' | 'orders'>('pending');
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+
+    // Orders State
+    const [orders, setOrders] = useState<Order[]>([]);
+
+    useEffect(() => {
+        if (activeTab === 'orders') {
+            loadOrders();
+        }
+    }, [activeTab]);
+
+    const loadOrders = async () => {
+        const data = await shopService.getOrders();
+        setOrders(data);
+    };
+
+    const handleOrderStatus = async (id: string, status: 'completed') => {
+        if (window.confirm("Siparişi tamamlandı olarak işaretlemek istediğinize emin misiniz?")) {
+            await shopService.updateOrderStatus(id, status);
+            loadOrders();
+        }
+    };
+
 
     // Local state for draggable list
     const [localBlogPosts, setLocalBlogPosts] = useState<BlogEntry[]>([]);
@@ -256,9 +279,82 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                 >
                     BLOG YAZILARI ({blogPosts.length})
                 </button>
+                <button
+                    onClick={() => setActiveTab('orders')}
+                    className={`text-xl font-bold px-4 py-2 whitespace-nowrap ${activeTab === 'orders' ? 'bg-orange-500 text-white' : 'text-neutral-500 hover:text-white'}`}
+                >
+                    SİPARİŞLER ({orders.filter(o => o.status === 'pending').length})
+                </button>
             </div>
 
             {/* CONTENT AREA */}
+
+            {/* 0. ORDERS TAB */}
+            {activeTab === 'orders' && (
+                orders.length === 0 ? (
+                    <div className="border-4 border-white border-dashed p-12 text-center bg-neutral-900">
+                        <h2 className="text-3xl text-neutral-500">BEKLEYEN SİPARİŞ YOK</h2>
+                    </div>
+                ) : (
+                    <div className="grid gap-4">
+                        {orders.map(order => (
+                            <div key={order.id} className={`border-2 p-6 relative ${order.status === 'completed' ? 'bg-neutral-900 border-neutral-700 opacity-70' : 'bg-black border-white'}`}>
+                                <div className="flex justify-between items-start mb-4 border-b border-neutral-700 pb-2">
+                                    <div className="flex items-center gap-2">
+                                        <ShoppingBag className="text-orange-500" />
+                                        <h3 className="text-white font-bold text-xl uppercase">SİPARİŞ #{order.id.slice(0, 8)}</h3>
+                                        <span className={`px-2 py-0.5 text-xs font-bold ${order.status === 'completed' ? 'bg-green-900 text-green-200' : 'bg-yellow-900 text-yellow-200'}`}>
+                                            {order.status === 'completed' ? 'TAMAMLANDI' : 'BEKLIYOR'}
+                                        </span>
+                                    </div>
+                                    <div className="text-right">
+                                        <div className="text-neutral-400 text-sm font-mono flex items-center justify-end gap-1">
+                                            <Clock size={14} />
+                                            {new Date(order.createdAt).toLocaleString("tr-TR")}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label className="text-neutral-500 text-xs font-bold block mb-1">ÜRÜN</label>
+                                        <div className="text-xl text-yellow-400 font-bold">{order.productName}</div>
+                                        <div className="text-sm">
+                                            <p><span className="text-neutral-500">Adet:</span> {order.quantity}</p>
+                                            <p><span className="text-neutral-500">E-posta:</span> {order.customerEmail}</p>
+                                            {order.customerNote && (
+                                                <p className="mt-2 text-yellow-400 border-l-2 border-yellow-400 pl-2">
+                                                    <span className="text-neutral-500 block text-xs">Açıklama:</span>
+                                                    {order.customerNote}
+                                                </p>
+                                            )}
+                                            <p><span className="text-neutral-500">Tarih:</span> {new Date(order.createdAt).toLocaleString('tr-TR')}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="text-neutral-500 text-xs font-bold block mb-1">MÜŞTERİ</label>
+                                        <div className="flex items-center gap-2 text-white">
+                                            <User size={16} />
+                                            {order.customerEmail}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-end">
+                                        {order.status === 'pending' && (
+                                            <button
+                                                onClick={() => handleOrderStatus(order.id, 'completed')}
+                                                className="bg-green-600 text-white px-4 py-2 font-bold hover:bg-green-500 flex items-center gap-2"
+                                            >
+                                                <Check size={20} />
+                                                TAMAMLANDI
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )
+            )}
 
             {/* 1. SUGGESTIONS TAB */}
             {activeTab === 'suggestions' && (

@@ -30,5 +30,13 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
+
+    // Orders Collection
+    // - Everyone can create an order (public checkout)
+    // - Only authenticated admins can read all orders or update/delete them
+    match /orders/{orderId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
   }
 }

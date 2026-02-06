@@ -14,13 +14,16 @@ import { SurpriseModal } from './components/SurpriseModal';
 import { AdminPanel } from './components/AdminPanel';
 import { AboutModal } from './components/AboutModal';
 import { SuggestionModal } from './components/SuggestionModal';
-import { MovieEntry, SuggestionEntry, BlogEntry, MovieStatus } from './types';
+import { MovieEntry, SuggestionEntry, BlogEntry, MovieStatus, Product } from './types';
 import { blogService } from './services/blogService';
 import { MovieDetailModal } from './components/MovieDetailModal';
 import { LoginModal } from './components/LoginModal';
 import { BlogCard } from './components/BlogCard';
 import { BlogDetailModal } from './components/BlogDetailModal';
 import { StatisticsModal } from './components/StatisticsModal';
+import { ShopCard } from './components/ShopCard';
+import { ProductDetailModal } from './components/ProductDetailModal';
+import { shopService } from './services/shopService';
 
 import { useMovieData } from './hooks/useMovieData';
 import { auth } from './services/firebase';
@@ -28,7 +31,7 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { useMovieFilter } from './hooks/useMovieFilter';
 
 
-type ViewMode = 'watched' | 'watchlist' | 'admin' | 'blog';
+type ViewMode = 'watched' | 'watchlist' | 'admin' | 'blog' | 'shop';
 
 export default function App() {
   // 1. Core Data Hook
@@ -86,6 +89,26 @@ export default function App() {
   // Blog State
   const [selectedBlogPost, setSelectedBlogPost] = useState<BlogEntry | null>(null);
 
+  // Shop State
+  const [shopProducts, setShopProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Fetch Shop Products
+  const fetchShopProducts = async () => {
+    try {
+      const products = await shopService.getProducts();
+      setShopProducts(products);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  React.useEffect(() => {
+    if (view === 'shop') {
+      fetchShopProducts();
+    }
+  }, [view]);
+
   // Auth State
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -129,35 +152,50 @@ export default function App() {
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const blogId = params.get('blogId');
+    const tab = params.get('tab') as ViewMode | null;
+
     if (blogId && blogPosts.length > 0) {
       const post = blogPosts.find(p => p.id === blogId);
       if (post) {
         setView('blog');
         setSelectedBlogPost(post);
-      } else {
-        console.warn("[App] URL'deki blogId bulunamadı:", blogId);
+        return;
+      }
+    }
+
+    if (tab && ['watched', 'watchlist', 'admin', 'blog', 'shop'].includes(tab)) {
+      setView(tab);
+      if (tab === 'watched' || tab === 'watchlist') {
+        setActiveTab(tab as MovieStatus);
       }
     }
   }, [blogPosts]);
 
-
-  // Sync State -> URL (When selectedBlogPost changes)
+  // Sync State -> URL (When selectedBlogPost changes or View changes)
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
+    // Handle Blog ID
     if (selectedBlogPost) {
       if (params.get('blogId') !== selectedBlogPost.id) {
         params.set('blogId', selectedBlogPost.id);
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
-        window.history.pushState({ path: newUrl }, '', newUrl);
+        // Force view to blog if a post is selected
+        if (view !== 'blog') setView('blog');
       }
     } else {
-      if (params.has('blogId')) {
-        params.delete('blogId');
-        const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
-        window.history.pushState({ path: newUrl }, '', newUrl);
-      }
+      params.delete('blogId');
     }
-  }, [selectedBlogPost]);
+
+    // Handle Tab
+    if (view && !selectedBlogPost) {
+      params.set('tab', view);
+    }
+
+    const newUrl = params.toString() ? `${window.location.pathname}?${params.toString()}` : window.location.pathname;
+    window.history.replaceState({ path: newUrl }, '', newUrl);
+
+  }, [selectedBlogPost, view]);
+
 
   // Sync Data Tab with View (when not admin)
   const handleViewChange = (newView: ViewMode) => {
@@ -166,7 +204,9 @@ export default function App() {
       setActiveTab(newView);
     }
     // Reset pagination to Page 1 when switching views
-    hookPagination.setCurrentPage(1);
+    if (newView !== 'shop') {
+      hookPagination.setCurrentPage(1);
+    }
   };
 
   // Move to Watched State
@@ -257,6 +297,7 @@ export default function App() {
         onHoroscopeClick={() => setIsHoroscopeOpen(true)}
         onBlogClick={() => handleViewChange('blog')}
         onMusicClick={() => setIsMusicOpen(true)}
+        onShopClick={() => handleViewChange('shop')}
 
         // Mobile Menu Props
         onPatreonClick={() => setIsPatreonOpen(true)}
@@ -295,6 +336,17 @@ export default function App() {
                 key={post.id}
                 post={post}
                 onClick={setSelectedBlogPost}
+              />
+            ))}
+          </div>
+        ) : view === 'shop' ? (
+          // SHOP VIEW
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {shopProducts.map(product => (
+              <ShopCard
+                key={product.id}
+                product={product}
+                onClick={setSelectedProduct}
               />
             ))}
           </div>
@@ -561,6 +613,11 @@ export default function App() {
       <BlogDetailModal
         post={selectedBlogPost}
         onClose={() => setSelectedBlogPost(null)}
+      />
+
+      <ProductDetailModal
+        product={selectedProduct}
+        onClose={() => setSelectedProduct(null)}
       />
 
     </div>

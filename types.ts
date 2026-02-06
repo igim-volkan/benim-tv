@@ -57,3 +57,24 @@ export interface BlogEntry {
   coverImage?: string; // Optional URL/Base64
   order?: number;
 }
+
+export interface Product {
+  id: string;
+  title: string;
+  price: number;
+  image: string;
+  images?: string[]; // Array of all product images (including main one)
+  description: string;
+}
+
+export interface Order {
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  customerId?: string; // Optional for now if we don't have user IDs
+  customerEmail: string;
+  customerNote?: string; // New field for user description
+  status: 'pending' | 'completed' | 'cancelled';
+  createdAt: number; // Timestampring;
+}

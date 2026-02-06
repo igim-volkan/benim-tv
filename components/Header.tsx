@@ -13,6 +13,7 @@ interface HeaderProps {
     onHoroscopeClick: () => void;
     onBlogClick: () => void;
     onMusicClick: () => void;
+    onShopClick: () => void;
     // Mobile Menu Props
     onPatreonClick: () => void;
     onAddMovieClick: () => void;
@@ -33,6 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
     onHoroscopeClick,
     onBlogClick,
     onMusicClick,
+    onShopClick,
     onPatreonClick,
     onAddMovieClick,
     onLoginClick,
@@ -114,6 +116,12 @@ export const Header: React.FC<HeaderProps> = ({
                     >
                         600 MÜZİK
                     </button>
+                    <button
+                        onClick={onShopClick}
+                        className="text-orange-500 hover:bg-white hover:text-black px-2"
+                    >
+                        700 DÜKKAN
+                    </button>
                 </div>
             </div>
 
@@ -127,6 +135,7 @@ export const Header: React.FC<HeaderProps> = ({
                         <button onClick={() => handleMobileAction(onHoroscopeClick)} className="text-purple-400 border-2 border-white py-3 hover:bg-white hover:text-black">400 HOROSCOPE</button>
                         <button onClick={() => handleMobileAction(onBlogClick)} className="text-blue-400 border-2 border-white py-3 hover:bg-white hover:text-black">500 BLOG</button>
                         <button onClick={() => handleMobileAction(onMusicClick)} className="text-pink-400 border-2 border-white py-3 hover:bg-white hover:text-black">600 MÜZİK</button>
+                        <button onClick={() => handleMobileAction(onShopClick)} className="text-orange-500 border-2 border-white py-3 hover:bg-white hover:text-black">700 DÜKKAN</button>
 
                         <div className="h-px bg-white/30 my-2"></div>
 

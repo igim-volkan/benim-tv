@@ -143,6 +143,29 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
             }
         });
 
+
+        // 6. Most Watched Year (New)
+        const allYearCounts: Record<string, number> = {};
+        watchedMovies.forEach(m => {
+            if (m.year) {
+                const y = m.year.toString().substring(0, 4);
+                allYearCounts[y] = (allYearCounts[y] || 0) + 1;
+            }
+        });
+
+        let mostWatchedYear = "-";
+        let mostWatchedYearCount = 0;
+        Object.entries(allYearCounts).forEach(([year, count]) => {
+            if (count > mostWatchedYearCount) {
+                mostWatchedYearCount = count;
+                mostWatchedYear = year;
+            }
+        });
+
+        // 7. Total Watch Time (New)
+        // Avg 1.5 hours (90 mins) per movie
+        const totalWatchHours = (watchedCount * 1.5).toFixed(1);
+
         return {
             watchedCount,
             watchlistCount,
@@ -153,7 +176,10 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
             worstYear,
             worstAvg: worstAvg === 10 ? 0 : worstAvg.toFixed(1),
             topGenre,
-            topGenreCount
+            topGenreCount,
+            mostWatchedYear,
+            mostWatchedYearCount,
+            totalWatchHours
         };
     }, [movies]);
 
@@ -186,6 +212,24 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
 
                     {/* Main Stats Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+
+
+
+                        {/* Most Watched Year (New) */}
+                        <div className="bg-black border-2 border-orange-500 p-6 relative group hover:bg-neutral-900 transition-colors">
+                            <h3 className="text-orange-400 text-lg mb-2 mt-2">EN ÇOK İZLENEN YIL</h3>
+                            <div className="text-5xl font-bold text-white mb-2">{stats.mostWatchedYear}</div>
+                            <div className="text-neutral-500 text-sm">{stats.mostWatchedYearCount} FİLM İZLEDİN</div>
+                        </div>
+
+                        {/* Most Watched Director */}
+                        <div className="bg-black border-2 border-cyan-500 p-6 relative group hover:bg-neutral-900 transition-colors">
+                            <h3 className="text-white text-lg mb-2 mt-2">EN ÇOK İZLENEN YÖNETMEN</h3>
+                            <div className="text-3xl font-bold text-cyan-400 mb-2 line-clamp-2 truncate">
+                                {stats.quantityDirector}
+                            </div>
+                            <div className="text-neutral-500 text-sm">{stats.quantityDirectorCount} FİLMİNİ İZLEDİN</div>
+                        </div>
 
                         {/* Best Year */}
                         <div className="bg-black border-2 border-yellow-400 p-6 relative group hover:bg-neutral-900 transition-colors">
@@ -233,15 +277,6 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                             )}
                         </div>
 
-                        {/* Most Watched Director */}
-                        <div className="bg-black border-2 border-cyan-500 p-6 relative group hover:bg-neutral-900 transition-colors">
-                            <h3 className="text-white text-lg mb-2 mt-2">EN ÇOK İZLENEN YÖNETMEN</h3>
-                            <div className="text-3xl font-bold text-cyan-400 mb-2 line-clamp-2 truncate">
-                                {stats.quantityDirector}
-                            </div>
-                            <div className="text-neutral-500 text-sm">{stats.quantityDirectorCount} FİLMİNİ İZLEDİN</div>
-                        </div>
-
                         {/* Worst Year */}
                         <div className="bg-black border-2 border-red-800 p-6 relative group hover:bg-neutral-900 transition-colors">
                             <h3 className="text-red-500 text-lg mb-2 mt-2">EN BERBAT YIL</h3>
@@ -254,6 +289,13 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                             <h3 className="text-green-400 text-lg mb-2 mt-2">FAVORİ TÜR</h3>
                             <div className="text-4xl font-bold text-white mb-2">{stats.topGenre}</div>
                             <div className="text-neutral-500 text-sm">{stats.topGenreCount} ADET İZLENEN</div>
+                        </div>
+
+                        {/* Total Watch Time (New) */}
+                        <div className="bg-black border-2 border-blue-500 p-6 relative group hover:bg-neutral-900 transition-colors">
+                            <h3 className="text-blue-400 text-lg mb-2 mt-2">TOPLAM İZLEME SÜRESİ</h3>
+                            <div className="text-4xl font-bold text-white mb-2">{stats.totalWatchHours} SAAT</div>
+                            <div className="text-neutral-500 text-sm">ORTALAMA 1.5 SAAT / FİLM</div>
                         </div>
 
                         {/* Total Counts */}
