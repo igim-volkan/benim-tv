@@ -65,6 +65,7 @@ export interface Product {
   image: string;
   images?: string[]; // Array of all product images (including main one)
   description: string;
+  label?: string; // Optional label for product (e.g. "YENİ")
 }
 
 export interface Order {

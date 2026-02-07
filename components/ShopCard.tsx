@@ -13,6 +13,11 @@ export const ShopCard: React.FC<ShopCardProps> = ({ product, onClick }) => {
             className="border-2 border-white bg-neutral-900 group cursor-pointer relative overflow-hidden transition-all h-full flex flex-col"
         >
             <div className="aspect-[3/4] bg-black relative border-b-2 border-white w-full">
+                {product.label && (
+                    <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 z-10 border border-white shadow-md">
+                        {product.label}
+                    </div>
+                )}
                 <img
                     src={product.image}
                     alt={product.title}

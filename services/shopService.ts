@@ -4,6 +4,24 @@ import { Product, Order } from '../types';
 
 const PRODUCTS: Product[] = [
     {
+        id: 'p11',
+        title: 'Entel Logolu T-Shirt',
+        price: 700,
+        image: '/entel-tshirt.jpg',
+        images: [
+            '/entel-tshirt.jpg',
+            '/entel-tshirt-2.jpg',
+            '/entel-tshirt-3.jpg'
+        ],
+        images: [
+            '/entel-tshirt.jpg',
+            '/entel-tshirt-2.jpg',
+            '/entel-tshirt-3.jpg'
+        ],
+        description: 'Entel serisi özel tasarım t-shirt. %100 pamuk, oversize kesim. Sınırlı sayıda üretim.',
+        label: 'YENİ'
+    },
+    {
         id: 'p1',
         title: 'Vurgun Logolu T-Shirt',
         price: 700,
@@ -20,6 +38,62 @@ const PRODUCTS: Product[] = [
         description: 'Nazar serisi özel tasarım t-shirt. %100 pamuk, oversize kesim. Sınırlı sayıda üretim.'
     },
     {
+        id: 'p9',
+        title: 'Merveler Logolu T-shirt',
+        price: 700,
+        image: '/merveler-tshirt-main.jpg',
+        images: [
+            '/merveler-tshirt-main.jpg',
+            '/merveler-tshirt-2-new.jpg',
+            '/merveler-tshirt-3-new.jpg'
+        ],
+        images: [
+            '/merveler-tshirt-main.jpg',
+            '/merveler-tshirt-2-new.jpg',
+            '/merveler-tshirt-3-new.jpg'
+        ],
+        description: 'Merveler serisi özel tasarım t-shirt. %100 pamuk, oversize kesim. Sınırlı sayıda üretim.',
+        label: 'YENİ'
+    },
+    {
+        id: 'p10',
+        title: 'Obez Logolu T-Shirt',
+        price: 700,
+        image: '/obez-tshirt.jpg',
+        images: [
+            '/obez-tshirt.jpg',
+            '/obez-tshirt-2.jpg',
+            '/obez-tshirt-3.jpg',
+            '/obez-tshirt-4.jpg'
+        ],
+        images: [
+            '/obez-tshirt.jpg',
+            '/obez-tshirt-2.jpg',
+            '/obez-tshirt-3.jpg',
+            '/obez-tshirt-4.jpg'
+        ],
+        description: 'Obez serisi özel tasarım t-shirt. %100 pamuk, oversize kesim. Sınırlı sayıda üretim.',
+        label: 'YENİ'
+    },
+    {
+        id: 'p12',
+        title: 'Atarlı Logolu T-Shirt',
+        price: 700,
+        image: '/atarli-tshirt.jpg',
+        images: [
+            '/atarli-tshirt.jpg',
+            '/atarli-tshirt-2.jpg',
+            '/atarli-tshirt-3.jpg'
+        ],
+        images: [
+            '/atarli-tshirt.jpg',
+            '/atarli-tshirt-2.jpg',
+            '/atarli-tshirt-3.jpg'
+        ],
+        description: 'Atarlı serisi özel tasarım t-shirt. %100 pamuk, oversize kesim. Sınırlı sayıda üretim.',
+        label: 'YENİ'
+    },
+    {
         id: 'p3',
         title: 'Nazar Logolu Hoodie',
         price: 1200, // Estimated price, can be updated later or removed as UI doesn't show it
@@ -31,7 +105,10 @@ const PRODUCTS: Product[] = [
         title: 'Vurgun Logolu Önlük',
         price: 500, // Estimated price
         image: '/vurgun-apron.png',
-        description: 'Vurgun serisi özel tasarım mutfak önlüğü. Leke tutmaz kumaş.'
+        price: 500, // Estimated price
+        image: '/vurgun-apron.png',
+        description: 'Vurgun serisi özel tasarım mutfak önlüğü. Leke tutmaz kumaş.',
+        label: 'YENİ'
     },
     {
         id: 'p5',
