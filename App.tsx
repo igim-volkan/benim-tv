@@ -8,6 +8,7 @@ import { BlogModal } from './components/BlogModal';
 
 import { PatreonModal } from './components/PatreonModal';
 import { MusicModal } from './components/MusicModal';
+import { ShopFilterBar } from './components/ShopFilterBar';
 import { Header } from './components/Header';
 import { FilterBar } from './components/FilterBar';
 import { SurpriseModal } from './components/SurpriseModal';
@@ -92,6 +93,12 @@ export default function App() {
   // Shop State
   const [shopProducts, setShopProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedShopCategory, setSelectedShopCategory] = useState<Product['category'] | 'TÜMÜ'>('TÜMÜ');
+
+  // Filter Shop Products
+  const filteredShopProducts = selectedShopCategory === 'TÜMÜ'
+    ? shopProducts
+    : shopProducts.filter(p => p.category === selectedShopCategory);
 
   // Fetch Shop Products
   const fetchShopProducts = async () => {
@@ -341,14 +348,20 @@ export default function App() {
           </div>
         ) : view === 'shop' ? (
           // SHOP VIEW
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {shopProducts.map(product => (
-              <ShopCard
-                key={product.id}
-                product={product}
-                onClick={setSelectedProduct}
-              />
-            ))}
+          <div className="flex flex-col">
+            <ShopFilterBar
+              selectedCategory={selectedShopCategory}
+              setSelectedCategory={setSelectedShopCategory}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredShopProducts.map(product => (
+                <ShopCard
+                  key={product.id}
+                  product={product}
+                  onClick={setSelectedProduct}
+                />
+              ))}
+            </div>
           </div>
         ) : isLoading ? (
           // LOADING STATE

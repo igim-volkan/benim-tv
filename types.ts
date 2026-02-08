@@ -61,11 +61,12 @@ export interface BlogEntry {
 export interface Product {
   id: string;
   title: string;
-  price: number;
+
   image: string;
   images?: string[]; // Array of all product images (including main one)
   description: string;
   label?: string; // Optional label for product (e.g. "YENİ")
+  category: 'T-shirt' | 'Torba' | 'Hoodie' | 'Sweatshirt' | 'Yastık' | 'Önlük';
 }
 
 export interface Order {
