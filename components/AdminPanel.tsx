@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { MovieEntry, AddMovieFormData, SuggestionEntry, BlogEntry, Order } from '../types';
-import { Check, Edit, Trash2, X, Eye, Plus, FileText, Search, ShoppingBag, Clock, User } from 'lucide-react';
+import { Check, Edit, Trash2, X, Eye, Plus, FileText, Search, ShoppingBag, Clock, User, Database, Upload, Download } from 'lucide-react';
+import { db } from '../services/firebase';
+import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { AddMovieModal } from './AddMovieModal';
 import { AddBlogModal } from './AddBlogModal';
 import { blogService } from '../services/blogService';
@@ -21,7 +23,7 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDelete, onUpdate, suggestions, onDeleteSuggestion, blogPosts, onBlogUpdate }) => {
-    const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog' | 'orders'>('pending');
+    const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog' | 'orders' | 'backup'>('pending');
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -177,6 +179,86 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
         }
     };
 
+    // --- BACKUP & RESTORE ---
+    const [isRestoring, setIsRestoring] = useState(false);
+    const [restoreStatus, setRestoreStatus] = useState<string>('');
+
+    const handleBackup = () => {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(movies, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", `bolvitamin_yedek_${new Date().toISOString().split('T')[0]}.json`);
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    };
+
+    const handleRestore = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const fileReader = new FileReader();
+        if (!event.target.files?.[0]) return;
+
+        fileReader.readAsText(event.target.files[0], "UTF-8");
+        fileReader.onload = async (e) => {
+            try {
+                const content = e.target?.result as string;
+                const parsedMovies = JSON.parse(content) as MovieEntry[];
+
+                if (!Array.isArray(parsedMovies)) {
+                    alert("Geçersiz dosya formatı. JSON dizisi bekleniyor.");
+                    return;
+                }
+
+                if (!window.confirm(`${parsedMovies.length} adet film bulundu. Geri yükleme işlemini başlatmak istiyor musunuz? (Mevcut kayıtlar kontrol edilecek)`)) {
+                    return;
+                }
+
+                setIsRestoring(true);
+                setRestoreStatus('Geri yükleme başlıyor...');
+
+                let addedCount = 0;
+                let skippedCount = 0;
+
+                for (const movie of parsedMovies) {
+                    // Check if exists by title (simple check) to avoid duplicates
+                    // Ideally check by ID if preserving IDs, but Firestore IDs are auto-generated usually on add.
+                    // If we restore with IDs, we might overwrite?
+                    // Let's assume we want to restore MISSING movies.
+
+                    // Sanitize data
+                    const { id, ...movieData } = movie; // Exclude ID to let Firestore generate new one or we can use setDoc if we want to preserve ID.
+                    // Let's check duplicate by Title
+
+                    const q = query(collection(db, "movies"), where("title", "==", movie.title));
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        skippedCount++;
+                        setRestoreStatus(`Atlandı (Mevcut): ${movie.title} (${addedCount} eklendi, ${skippedCount} atlandı)`);
+                    } else {
+                        // Add new
+                        await addDoc(collection(db, "movies"), {
+                            ...movieData,
+                            createdAt: movieData.createdAt || new Date().toISOString(),
+                            isApproved: movieData.isApproved !== undefined ? movieData.isApproved : true // Default to approved if restoring? Or keep original state.
+                        });
+                        addedCount++;
+                        setRestoreStatus(`Eklendi: ${movie.title} (${addedCount} eklendi, ${skippedCount} atlandı)`);
+                    }
+                }
+
+                setRestoreStatus(`İşlem tamamlandı! Toplam ${addedCount} film eklendi ve ${skippedCount} film (zaten var olduğu için) atlandı.`);
+                alert(`Geri yükleme tamamlandı.\nEklenen: ${addedCount}\nAtlanan: ${skippedCount}`);
+
+            } catch (error) {
+                console.error("Restore error:", error);
+                alert("Geri yükleme sırasında hata oluştu. Dosyayı kontrol edin.");
+            } finally {
+                setIsRestoring(false);
+            }
+        };
+    };
+
+    // Helper to render movie actions based on tab
 
     // Helper to render movie actions based on tab
     const renderActions = (movie: MovieEntry) => (
@@ -285,6 +367,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                 >
                     SİPARİŞLER ({orders.filter(o => o.status === 'pending').length})
                 </button>
+                <button
+                    onClick={() => setActiveTab('backup')}
+                    className={`text-xl font-bold px-4 py-2 whitespace-nowrap ${activeTab === 'backup' ? 'bg-blue-500 text-white' : 'text-neutral-500 hover:text-white'}`}
+                >
+                    VERİ YÖNETİMİ
+                </button>
             </div>
 
             {/* CONTENT AREA */}
@@ -354,6 +442,67 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                         ))}
                     </div>
                 )
+            )}
+
+            {/* BACKUP TAB */}
+            {activeTab === 'backup' && (
+                <div className="grid md:grid-cols-2 gap-8">
+                    {/* BACKUP */}
+                    <div className="bg-neutral-900 border-2 border-white p-8 flex flex-col items-center justify-center text-center space-y-4">
+                        <Database size={64} className="text-blue-500 mb-4" />
+                        <h2 className="text-3xl font-bold text-white uppercase">SİSTEM YEDEĞİ AL</h2>
+                        <p className="text-neutral-400">
+                            Tüm film veritabanını ({movies.length} film) JSON formatında bilgisayarınıza indirin.
+                            Bu dosya daha sonra geri yükleme için kullanılabilir.
+                        </p>
+                        <button
+                            onClick={handleBackup}
+                            className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 font-bold text-xl flex items-center gap-3 mt-4"
+                        >
+                            <Download size={24} />
+                            YEDEĞİ İNDİR
+                        </button>
+                    </div>
+
+                    {/* RESTORE */}
+                    <div className="bg-neutral-900 border-2 border-white p-8 flex flex-col items-center justify-center text-center space-y-4 relative overflow-hidden">
+                        <Upload size={64} className="text-green-500 mb-4" />
+                        <h2 className="text-3xl font-bold text-white uppercase">YEDEKTEN GERİ YÜKLE</h2>
+                        <p className="text-neutral-400">
+                            Daha önce aldığınız bir yedek dosyasını (.json) yükleyerek silinen verileri geri getirin.
+                            (Mevcut filmler tekrar eklenmez)
+                        </p>
+
+                        {isRestoring ? (
+                            <div className="w-full bg-neutral-800 p-4 rounded border border-neutral-700 mt-4">
+                                <div className="text-yellow-400 animate-pulse font-mono mb-2">İŞLEM YAPILIYOR...</div>
+                                <div className="text-xs text-neutral-500 font-mono text-left max-h-20 overflow-y-auto">
+                                    {restoreStatus}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="relative mt-4">
+                                <input
+                                    type="file"
+                                    accept=".json"
+                                    onChange={handleRestore}
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                />
+                                <button className="bg-green-600 hover:bg-green-500 text-white px-8 py-4 font-bold text-xl flex items-center gap-3 pointer-events-none">
+                                    <FileText size={24} />
+                                    DOSYA SEÇ VE YÜKLE
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="md:col-span-2 bg-red-900/20 border border-red-500/30 p-4 text-center">
+                        <p className="text-red-400 text-sm">
+                            * UYARI: Geri yükleme işlemi veritabanına doğrudan yazma yapar.
+                            Büyük dosyalar için işlem biraz zaman alabilir. Lütfen sayfa yenilemeyin.
+                        </p>
+                    </div>
+                </div>
             )}
 
             {/* 1. SUGGESTIONS TAB */}
