@@ -1,14 +1,24 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { HelpCircle } from 'lucide-react';
 
 interface AboutModalProps {
     isOpen: boolean;
     onClose: () => void;
-    watchedCount: number;
-    watchlistCount: number;
 }
 
-export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, watchedCount, watchlistCount }) => {
+export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose }) => {
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isOpen]);
+
     if (!isOpen) return null;
 
     return (
@@ -39,26 +49,27 @@ export const AboutModal: React.FC<AboutModalProps> = ({ isOpen, onClose, watched
                         <p>
                             Puan tablolarıma göz atarak hangi filmin izlemeye değer olduğunu görebilir, kişisel eleştirilerimle film hakkında ön bilgi edinebilirsiniz.
                         </p>
-                        <p className="text-cyan-400 font-bold mt-2 md:mt-4">
-                            Burası bir veritabanı değil, bir filmseverin size sunduğu dijital bir tavsiye kutusudur.
-                        </p>
-
-                        <div className="mt-6 md:mt-8 border-t-2 border-neutral-800 pt-4 md:pt-6 flex flex-wrap gap-4 md:gap-8 justify-center font-mono text-base md:text-lg">
-                            <div className="flex items-center gap-2">
-                                <span className="text-yellow-400 font-bold text-lg md:text-xl">100</span>
-                                <span className="text-white">İZLENEN</span>
-                                <span className="text-yellow-400 font-bold text-xs md:text-sm bg-neutral-900 px-2 py-1 border border-neutral-700 ml-1">
-                                    {watchedCount} FİLM
-                                </span>
+                        <div className="mt-4 md:mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {/* Mission Statement Box */}
+                            <div className="bg-neutral-900/50 p-6 border border-neutral-700/50 flex items-center justify-center">
+                                <p className="text-cyan-400 font-bold text-center text-xl md:text-2xl leading-relaxed">
+                                    "Burası bir veritabanı değil, bir filmseverin size sunduğu Dijital Bir Tavsiye Kutusudur."
+                                </p>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-yellow-400 font-bold text-lg md:text-xl">200</span>
-                                <span className="text-white">İZLENECEK</span>
-                                <span className="text-yellow-400 font-bold text-xs md:text-sm bg-neutral-900 px-2 py-1 border border-neutral-700 ml-1">
-                                    {watchlistCount} FİLM
-                                </span>
+
+                            {/* Ratings Box */}
+                            <div className="bg-neutral-900/50 p-4 border border-neutral-700/50 text-base md:text-lg font-mono flex items-center">
+                                <ul className="space-y-2 w-full">
+                                    <li className="flex items-center gap-2"><span className="text-yellow-400 font-bold">5 YILDIZ</span> <span className="text-neutral-500">--&gt;</span> <span className="text-green-400">ÇOK İYİ OLUR.</span></li>
+                                    <li className="flex items-center gap-2"><span className="text-yellow-400 font-bold">4 YILDIZ</span> <span className="text-neutral-500">--&gt;</span> <span className="text-cyan-400">İYİ OLUR.</span></li>
+                                    <li className="flex items-center gap-2"><span className="text-yellow-400 font-bold">3 YILDIZ</span> <span className="text-neutral-500">--&gt;</span> <span className="text-neutral-400">HMMM.</span></li>
+                                    <li className="flex items-center gap-2"><span className="text-yellow-400 font-bold">2 YILDIZ</span> <span className="text-neutral-500">--&gt;</span> <span className="text-orange-400">NİYE Kİ?</span></li>
+                                    <li className="flex items-center gap-2"><span className="text-yellow-400 font-bold">1 YILDIZ</span> <span className="text-neutral-500">--&gt;</span> <span className="text-red-500 font-bold blink">SAKIIN.</span></li>
+                                </ul>
                             </div>
                         </div>
+
+
                     </div>
 
 

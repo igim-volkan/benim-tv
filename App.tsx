@@ -591,8 +591,6 @@ export default function App() {
       <AboutModal
         isOpen={isAboutOpen}
         onClose={() => setIsAboutOpen(false)}
-        watchedCount={approvedMovies.filter(m => m.status === 'watched').length}
-        watchlistCount={approvedMovies.filter(m => m.status === 'watchlist').length}
       />
 
       <StatisticsModal

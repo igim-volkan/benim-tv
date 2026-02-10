@@ -47,11 +47,6 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
         }
         return () => {
             document.body.style.overflow = 'unset';
-            const appRoot = document.getElementById('root');
-            if (appRoot) {
-                appRoot.style.pointerEvents = 'auto';
-                appRoot.style.filter = 'none';
-            }
         };
     }, [isOpen]);
 
@@ -102,7 +97,7 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
         // Top Rated Directors
         const topDirectors = Object.entries(directorCounts)
             .sort(([, a], [, b]) => b - a)
-            .slice(0, 5)
+            .slice(0, 6)
             .map(([name, count]) => {
                 const stats = directorStats[name];
                 const avg = stats ? (stats.totalRating / stats.count).toFixed(1) : "0.0";
@@ -112,8 +107,15 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
         // Most Watched Directors (Top 3)
         const mostWatchedDirectors = Object.entries(mostWatchedDirectorCounts)
             .sort(([, a], [, b]) => b - a)
-            .slice(0, 3)
-            .map(([name, count]) => ({ name, count }));
+            .slice(0, 6)
+            .map(([name, count]) => {
+                const stats = directorStats[name];
+                const avg = stats ? (stats.totalRating / stats.count).toFixed(1) : "0.0";
+                return { name, count, avg };
+            });
+
+        // Total Directors Count
+        const totalDirectors = Object.keys(mostWatchedDirectorCounts).length;
 
         // 3. Worst Year & Decade Analysis
         const yearRatings: Record<string, { total: number, count: number }> = {};
@@ -179,18 +181,7 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
             }
         });
 
-        const getDecadeSentence = (decade: string) => {
-            if (decade.startsWith("195")) return "Klasiklerin asaletinden vazgeçemiyorsun. Eski toprak!";
-            if (decade.startsWith("196")) return "New Hollywood ve değişimin ruhunu taşıyorsun.";
-            if (decade.startsWith("197")) return "Ruhun 70'lerde hapsolmuş; modern sinema seni pek açmıyor.";
-            if (decade.startsWith("198")) return "Blockbuster, neon ışıklar ve nostalji senin işin.";
-            if (decade.startsWith("199")) return "Bağımsız sinemanın ve kült filmlerin yükselişi seni etkilemiş.";
-            if (decade.startsWith("200")) return "Milenyum çağı ve modern klasikler senin favorin.";
-            if (decade.startsWith("201")) return "Dijital çağın ve süper kahramanların evrenindesin.";
-            if (decade.startsWith("202")) return "Sinemanın en güncel haline tanıklık ediyorsun.";
-            return "Sinema senin için zamansız bir tutku.";
-        };
-        const decadeSentence = bestDecade !== "-" ? getDecadeSentence(bestDecade) : "Yeterli veri yok.";
+
 
 
         // 4. Genre Analysis
@@ -238,7 +229,11 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
         const topWatchedYears = Object.entries(allYearCounts)
             .sort(([, a], [, b]) => b - a)
             .slice(0, 5)
-            .map(([year, count]) => ({ year, count }));
+            .map(([year, count]) => {
+                const data = yearRatings[year];
+                const avg = data ? (data.total / data.count).toFixed(1) : "0.0";
+                return { year, count, avg };
+            });
 
         // 6. Top High Rated Years (4+ Stars)
         const highRatedYearCounts: Record<string, number> = {};
@@ -251,7 +246,11 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
         const topHighRatedYears = Object.entries(highRatedYearCounts)
             .sort(([, a], [, b]) => b - a)
             .slice(0, 5)
-            .map(([year, count]) => ({ year, count }));
+            .map(([year, count]) => {
+                const data = yearRatings[year];
+                const avg = data ? (data.total / data.count).toFixed(1) : "0.0";
+                return { year, count, avg };
+            });
 
         // 7. Total Watch Time
         const totalHours = watchedCount * 1.5;
@@ -305,14 +304,14 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
             bestDecade,
             bestDecadeAvg: bestDecadeAvg.toFixed(1),
             bestDecadeCount,
-            decadeSentence
+            totalDirectors
         };
     }, [movies]);
 
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[10000] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
+        <div className="fixed inset-0 bg-black/95 backdrop-blur-sm z-[20000] flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={onClose}>
             <div
                 className="bg-neutral-900 border-4 border-white w-full max-w-5xl shadow-[0_0_50px_rgba(255,255,255,0.1)] flex flex-col max-h-[90vh] overflow-hidden"
                 onClick={e => e.stopPropagation()}
@@ -333,7 +332,7 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                 </div>
 
                 {/* Content */}
-                <div className="p-4 md:p-8 space-y-8 font-sans overflow-y-auto custom-scrollbar flex-1 bg-[#0a0a0a]">
+                <div className="p-4 md:p-8 space-y-8 font-sans overflow-y-auto custom-scrollbar flex-1 bg-[#0a0a0a] overscroll-contain will-change-scroll">
 
                     {/* Top Stats Row */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -347,7 +346,7 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                         </div>
                         <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
                             <div className="text-4xl font-bold text-white">{stats.mostWatchedYear}</div>
-                            <div className="text-neutral-400 text-xs uppercase tracking-wider">Favori Yıl</div>
+                            <div className="text-neutral-400 text-xs uppercase tracking-wider">EN ÇOK İZLENEN YIL</div>
                         </div>
                         <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
                             <div className="text-4xl font-bold text-white">{stats.totalWatchHours}</div>
@@ -397,26 +396,32 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                         </div>
 
                         {/* Decade Analysis (Golden Age) */}
-                        <div className="bg-neutral-900 border border-neutral-800 p-6 flex flex-col justify-center relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <div className="flex flex-col gap-4">
+                            <div className="bg-neutral-900 border border-neutral-800 p-6 flex flex-col justify-center relative overflow-hidden group flex-1">
+                                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                                </div>
+
+                                <h3 className="text-xl font-bold text-yellow-500 mb-4 flex items-center gap-2 uppercase tracking-widest">
+                                    EN İYİ 10 YIL ARALIĞI
+                                </h3>
+
+                                <div className="relative z-10">
+                                    <div className="text-6xl font-black text-white mb-2 font-mono">
+                                        {stats.bestDecade}
+                                    </div>
+                                    <div className="text-lg text-yellow-500/80 mb-6 font-bold flex flex-col gap-1">
+                                        <span>Ortalama Puan: {stats.bestDecadeAvg}</span>
+                                        <span className="text-sm text-neutral-500">({stats.bestDecadeCount} Film)</span>
+                                    </div>
+                                </div>
                             </div>
 
-                            <h3 className="text-xl font-bold text-yellow-500 mb-4 flex items-center gap-2 uppercase tracking-widest">
-                                ALTIN ÇAĞIM
-                            </h3>
-
-                            <div className="relative z-10">
-                                <div className="text-6xl font-black text-white mb-2 font-mono">
-                                    {stats.bestDecade}
+                            <div className="bg-red-950/30 border border-red-900/50 p-6 flex items-center justify-between">
+                                <div>
+                                    <h3 className="text-red-500 font-bold mb-1 uppercase tracking-wider">En Berbat Yıl</h3>
+                                    <p className="text-4xl font-black text-white">{stats.worstYear}</p>
+                                    <p className="text-red-400 text-sm mt-1">Ortalama Puan: {stats.worstAvg}</p>
                                 </div>
-                                <div className="text-lg text-yellow-500/80 mb-6 font-bold flex flex-col gap-1">
-                                    <span>Ortalama Puan: {stats.bestDecadeAvg}</span>
-                                    <span className="text-sm text-neutral-500">({stats.bestDecadeCount} Film)</span>
-                                </div>
-
-                                <blockquote className="border-l-4 border-yellow-500 pl-4 italic text-neutral-300 text-lg">
-                                    "{stats.decadeSentence}"
-                                </blockquote>
                             </div>
                         </div>
                     </div>
@@ -493,7 +498,10 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                                             </span>
                                             <span className="text-white font-medium">{d.year}</span>
                                         </div>
-                                        <span className="text-orange-400 font-bold">{d.count} Film</span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-orange-400 font-bold text-sm bg-orange-400/10 px-2 py-0.5 rounded border border-orange-400/20">{d.avg} ★</span>
+                                            <span className="text-white font-bold">{d.count} Film</span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -502,9 +510,8 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                         {/* Top High Rated Years */}
                         <div className="bg-neutral-900 p-6 border border-neutral-800">
                             <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2 border-b border-neutral-700 pb-2">
-                                En Kaliteli Yıllar
+                                EN ÇOK 4+ YILDIZ ALAN YILLAR
                             </h3>
-                            <p className="text-xs text-neutral-500 mb-4">EN ÇOK 4+ YILDIZ ALANLAR</p>
                             <div className="space-y-3">
                                 {stats.topHighRatedYears.map((d, i) => (
                                     <div key={i} className="flex items-center justify-between bg-neutral-800 p-3 hover:bg-neutral-700 transition-colors border border-neutral-700">
@@ -514,7 +521,10 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                                             </span>
                                             <span className="text-white font-medium">{d.year}</span>
                                         </div>
-                                        <span className="text-green-400 font-bold">{d.count} Film</span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-green-500 font-bold text-sm bg-green-500/10 px-2 py-0.5 rounded border border-green-500/20">{d.avg} ★</span>
+                                            <span className="text-white font-bold">{d.count} Film</span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -540,7 +550,6 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                                             <span className="text-white font-medium">{d.name}</span>
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <span className="text-yellow-500 font-bold text-sm bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/20">{d.avg} ★</span>
                                             <span className="text-green-400 font-bold">{d.count} Film</span>
                                         </div>
                                     </div>
@@ -549,31 +558,29 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                         </div>
 
                         {/* Fun/Worst Stats */}
-                        <div className="flex flex-col gap-4">
-                            <div className="bg-red-950/30 border border-red-900/50 p-6 flex items-center justify-between">
-                                <div>
-                                    <h3 className="text-red-500 font-bold mb-1 uppercase tracking-wider">En Berbat Yıl</h3>
-                                    <p className="text-4xl font-black text-white">{stats.worstYear}</p>
-                                    <p className="text-red-400 text-sm mt-1">Ortalama Puan: {stats.worstAvg}</p>
-                                </div>
-                            </div>
-
-                            <div className="bg-neutral-900 p-6 border border-neutral-800 flex-1">
-                                <h3 className="text-xl font-bold text-white mb-1 tracking-wider border-b border-neutral-700 pb-2">En Çok İzlenen Yönetmenler</h3>
-                                <p className="text-xs text-neutral-500 mb-4 uppercase">EN ÇOK IZLENENLER</p>
-                                <div className="space-y-3">
-                                    {stats.mostWatchedDirectors.map((d, i) => (
-                                        <div key={i} className="flex items-center justify-between bg-neutral-800 p-3 hover:bg-neutral-700 transition-colors border border-neutral-700">
-                                            <div className="flex items-center gap-3">
-                                                <span className={`flex items-center justify-center w-6 h-6 text-xs font-bold ${i === 0 ? 'bg-cyan-500 text-black' : 'bg-neutral-600 text-white'}`}>
-                                                    {i + 1}
-                                                </span>
-                                                <span className="text-white font-medium">{d.name}</span>
-                                            </div>
-                                            <span className="text-cyan-400 font-bold">{d.count} Film</span>
+                        <div className="bg-neutral-900 p-6 border border-neutral-800 h-full">
+                            <h3 className="text-xl font-bold text-white mb-1 tracking-wider border-b border-neutral-700 pb-2">En Çok İzlenen Yönetmenler</h3>
+                            <p className="text-xs text-neutral-500 mb-4 uppercase">EN ÇOK IZLENENLER</p>
+                            <div className="space-y-3">
+                                {stats.mostWatchedDirectors.map((d, i) => (
+                                    <div key={i} className="flex items-center justify-between bg-neutral-800 p-3 hover:bg-neutral-700 transition-colors border border-neutral-700">
+                                        <div className="flex items-center gap-3">
+                                            <span className={`flex items-center justify-center w-6 h-6 text-xs font-bold ${i === 0 ? 'bg-cyan-500 text-black' : 'bg-neutral-600 text-white'}`}>
+                                                {i + 1}
+                                            </span>
+                                            <span className="text-white font-medium">{d.name}</span>
                                         </div>
-                                    ))}
-                                </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-cyan-400 font-bold text-sm bg-cyan-400/10 px-2 py-0.5 rounded border border-cyan-400/20">{d.avg} ★</span>
+                                            <span className="text-white font-bold">{d.count} Film</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="mt-4 pt-3 border-t border-neutral-700 text-center">
+                                <p className="text-neutral-500 text-xs uppercase tracking-wider">
+                                    TOPLAM: <span className="text-white font-bold">{stats.totalDirectors}</span> YÖNETMEN
+                                </p>
                             </div>
                         </div>
                     </div>
