@@ -253,7 +253,7 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
             });
 
         // 7. Total Watch Time
-        const totalHours = watchedCount * 1.5;
+        const totalHours = watchedCount * 1.75;
         const totalWatchHours = totalHours.toFixed(1);
         const totalWatchDays = (totalHours / 24).toFixed(1);
 
@@ -280,6 +280,35 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
         });
         const globalAverageRating = ratedMovieCount > 0 ? (totalRatingSum / ratedMovieCount).toFixed(1) : "0.0";
 
+        // 9. Average Movies Per Year (Range Based)
+        let minYear = 9999;
+        let maxYear = 0;
+        watchedMovies.forEach(m => {
+            if (m.year) {
+                const y = parseInt(m.year.toString().substring(0, 4));
+                if (!isNaN(y)) {
+                    if (y < minYear) minYear = y;
+                    if (y > maxYear) maxYear = y;
+                }
+            }
+        });
+
+        let avgMoviesPerYear = "0";
+        if (watchedCount > 0 && maxYear >= minYear) {
+            const yearRange = maxYear - minYear;
+            // If range is 0 (all movies in same year), we can either decide to divide by 1 or handle specially. 
+            // Logic: if range is 0, it means 1 year. So average is count/1.
+            const divisor = yearRange === 0 ? 1 : yearRange;
+            avgMoviesPerYear = (watchedCount / divisor).toFixed(1);
+        }
+
+        // 10. Most Watched Year Frequency
+        let mostWatchedYearFrequency = "0";
+        if (mostWatchedYearCount > 0) {
+            // 365 days / movie count
+            mostWatchedYearFrequency = (365 / mostWatchedYearCount).toFixed(1);
+        }
+
 
         return {
             watchedCount,
@@ -304,7 +333,12 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
             bestDecade,
             bestDecadeAvg: bestDecadeAvg.toFixed(1),
             bestDecadeCount,
-            totalDirectors
+            totalDirectors,
+            // New Stats
+            minYear,
+            maxYear,
+            avgMoviesPerYear,
+            mostWatchedYearFrequency
         };
     }, [movies]);
 
@@ -351,6 +385,32 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                         <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
                             <div className="text-4xl font-bold text-white">{stats.totalWatchHours}</div>
                             <div className="text-neutral-400 text-xs uppercase tracking-wider">Saat ({stats.totalWatchDays} Gün)</div>
+                        </div>
+                    </div>
+
+                    {/* New Stats Row: Average & Frequency */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex items-center justify-between px-6">
+                            <div>
+                                <div className="text-3xl font-bold text-white">{stats.avgMoviesPerYear}</div>
+                                <div className="text-neutral-400 text-xs uppercase tracking-wider mt-1">
+                                    YIL BAŞINA ORTALAMA
+                                    <span className="block text-[10px] text-neutral-600 normal-case">
+                                        ({stats.minYear === 9999 ? '?' : stats.minYear} - {stats.maxYear === 0 ? '?' : stats.maxYear} Aralığı)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex items-center justify-between px-6">
+                            <div>
+                                <div className="text-3xl font-bold text-white">{stats.mostWatchedYearFrequency} <span className="text-lg font-normal text-neutral-500">Gün</span></div>
+                                <div className="text-neutral-400 text-xs uppercase tracking-wider mt-1">
+                                    {stats.mostWatchedYear} YILI SIKLIĞI
+                                    <span className="block text-[10px] text-neutral-600 normal-case">
+                                        (Ortalama {stats.mostWatchedYearFrequency} günde 1 film)
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
