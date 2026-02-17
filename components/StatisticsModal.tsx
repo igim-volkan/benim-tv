@@ -369,48 +369,47 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
                 <div className="p-4 md:p-8 space-y-8 font-sans overflow-y-auto custom-scrollbar flex-1 bg-[#0a0a0a] overscroll-contain will-change-scroll">
 
                     {/* Top Stats Row */}
+                    {/* Top Stats Row */}
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
-                            <div className="text-4xl font-bold text-white">{stats.watchedCount}</div>
-                            <div className="text-neutral-400 text-xs uppercase tracking-wider">İzlenen Film</div>
+                        {/* 1. Merged: Watched Film & Average */}
+                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center relative group">
+                            <div className="flex flex-col items-center justify-center mb-3">
+                                <div className="text-4xl font-bold text-white">{stats.watchedCount}</div>
+                                <div className="text-neutral-400 text-sm uppercase tracking-wider">İzlenen Film</div>
+                            </div>
+                            <div className="w-full border-t border-neutral-700 pt-2 flex flex-col items-center justify-center">
+                                <div className="text-lg font-bold text-green-500">{stats.avgMoviesPerYear}</div>
+                                <div className="text-xs text-neutral-500 uppercase tracking-wider mb-0.5">YILDA ORTALAMA</div>
+                                <div className="text-xs text-neutral-600 font-medium">
+                                    ({stats.minYear === 9999 ? '?' : stats.minYear} - {stats.maxYear === 0 ? '?' : stats.maxYear})
+                                </div>
+                            </div>
                         </div>
-                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
-                            <div className="text-4xl font-bold text-white">{stats.watchlistCount}</div>
-                            <div className="text-neutral-400 text-xs uppercase tracking-wider">İzlenecek Listesi</div>
-                        </div>
-                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
-                            <div className="text-4xl font-bold text-white">{stats.mostWatchedYear}</div>
-                            <div className="text-neutral-400 text-xs uppercase tracking-wider">EN ÇOK İZLENEN YIL</div>
-                        </div>
+
+                        {/* 2. Total Time */}
                         <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
                             <div className="text-4xl font-bold text-white">{stats.totalWatchHours}</div>
-                            <div className="text-neutral-400 text-xs uppercase tracking-wider">Saat ({stats.totalWatchDays} Gün)</div>
+                            <div className="text-neutral-400 text-sm uppercase tracking-wider">Saat ({stats.totalWatchDays} Gün)</div>
                         </div>
-                    </div>
 
-                    {/* New Stats Row: Average & Frequency */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex items-center justify-between px-6">
-                            <div>
-                                <div className="text-3xl font-bold text-white">{stats.avgMoviesPerYear}</div>
-                                <div className="text-neutral-400 text-xs uppercase tracking-wider mt-1">
-                                    YIL BAŞINA ORTALAMA
-                                    <span className="block text-[10px] text-neutral-600 normal-case">
-                                        ({stats.minYear === 9999 ? '?' : stats.minYear} - {stats.maxYear === 0 ? '?' : stats.maxYear} Aralığı)
-                                    </span>
+                        {/* 3. Merged: Most Watched Year & Frequency */}
+                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center relative group">
+                            <div className="flex flex-col items-center justify-center mb-3">
+                                <div className="text-4xl font-bold text-white">{stats.mostWatchedYear}</div>
+                                <div className="text-neutral-400 text-sm uppercase tracking-wider">EN ÇOK İZLENEN YIL</div>
+                            </div>
+                            <div className="w-full border-t border-neutral-700 pt-2 flex flex-col items-center justify-center">
+                                <div className="text-lg font-bold text-orange-500">
+                                    {stats.mostWatchedYearCount} Film <span className="text-neutral-600 mx-1">|</span> {stats.mostWatchedYearFrequency} Gün
                                 </div>
+                                <div className="text-xs text-neutral-500 uppercase tracking-wider">SIKLIK</div>
                             </div>
                         </div>
-                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex items-center justify-between px-6">
-                            <div>
-                                <div className="text-3xl font-bold text-white">{stats.mostWatchedYearFrequency} <span className="text-lg font-normal text-neutral-500">Gün</span></div>
-                                <div className="text-neutral-400 text-xs uppercase tracking-wider mt-1">
-                                    {stats.mostWatchedYear} YILI SIKLIĞI
-                                    <span className="block text-[10px] text-neutral-600 normal-case">
-                                        (Ortalama {stats.mostWatchedYearFrequency} günde 1 film)
-                                    </span>
-                                </div>
-                            </div>
+
+                        {/* 4. Watchlist */}
+                        <div className="bg-neutral-800 p-4 border border-neutral-700 flex flex-col items-center justify-center">
+                            <div className="text-4xl font-bold text-white">{stats.watchlistCount}</div>
+                            <div className="text-neutral-400 text-sm uppercase tracking-wider">İzlenecek Listesi</div>
                         </div>
                     </div>
 
@@ -478,7 +477,7 @@ export function StatisticsModal({ isOpen, onClose, movies }: StatisticsModalProp
 
                             <div className="bg-red-950/30 border border-red-900/50 p-6 flex items-center justify-between">
                                 <div>
-                                    <h3 className="text-red-500 font-bold mb-1 uppercase tracking-wider">En Berbat Yıl</h3>
+                                    <h3 className="text-red-500 font-bold mb-1 uppercase tracking-wider">En Düşük Puanlı Yıl</h3>
                                     <p className="text-4xl font-black text-white">{stats.worstYear}</p>
                                     <p className="text-red-400 text-sm mt-1">Ortalama Puan: {stats.worstAvg}</p>
                                 </div>
