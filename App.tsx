@@ -615,6 +615,7 @@ export default function App() {
           setSelectedMovie(null);
         }}
         onVote={voteMovie}
+        onDirectorClick={handleDirectorSelect}
       />
 
       <LoginModal

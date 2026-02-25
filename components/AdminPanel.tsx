@@ -23,7 +23,7 @@ interface AdminPanelProps {
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDelete, onUpdate, suggestions, onDeleteSuggestion, blogPosts, onBlogUpdate }) => {
-    const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog' | 'orders' | 'backup'>('pending');
+    const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'suggestions' | 'blog' | 'orders' | 'backup' | 'votes'>('pending');
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
@@ -88,6 +88,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
     // Derived lists
     const pendingMovies = movies.filter(m => m.isApproved === false);
     const approvedMovies = movies.filter(m => m.isApproved !== false);
+    const votedMovies = movies.filter(m => (m.agreeVotes || 0) > 0 || (m.disagreeVotes || 0) > 0)
+        .sort((a, b) => ((b.agreeVotes || 0) + (b.disagreeVotes || 0)) - ((a.agreeVotes || 0) + (a.disagreeVotes || 0)));
 
     // Movie Edit State
     const [editingMovie, setEditingMovie] = useState<MovieEntry | null>(null);
@@ -298,7 +300,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
         </div>
     );
 
-    const moviesDisplay = (activeTab === 'pending' ? pendingMovies : approvedMovies).filter(m => {
+    const moviesDisplay = (
+        activeTab === 'pending' ? pendingMovies :
+            activeTab === 'votes' ? votedMovies :
+                approvedMovies
+    ).filter(m => {
         if (!searchTerm) return true;
         const term = searchTerm.toLowerCase();
         return (
@@ -317,7 +323,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
     return (
         <div className="space-y-6">
             {/* Search Bar */}
-            {(activeTab === 'pending' || activeTab === 'approved') && (
+            {(activeTab === 'pending' || activeTab === 'approved' || activeTab === 'votes') && (
                 <div className="flex items-center bg-neutral-900 border-2 border-white p-2 mb-4">
                     <Search className="text-neutral-500 mr-2" />
                     <input
@@ -354,6 +360,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                     className={`text-xl font-bold px-4 py-2 whitespace-nowrap ${activeTab === 'suggestions' ? 'bg-purple-600 text-white' : 'text-neutral-500 hover:text-white'}`}
                 >
                     ÖNERİLER ({suggestions.length})
+                </button>
+                <button
+                    onClick={() => setActiveTab('votes')}
+                    className={`text-xl font-bold px-4 py-2 whitespace-nowrap ${activeTab === 'votes' ? 'bg-pink-600 text-white' : 'text-neutral-500 hover:text-white'}`}
+                >
+                    ZİYARETÇİ OYLARI ({votedMovies.length})
                 </button>
                 <button
                     onClick={() => setActiveTab('blog')}
@@ -608,14 +620,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                 </div>
             )}
 
-            {/* 3. MOVIES TABS (Pending & Approved) */}
-            {(activeTab === 'pending' || activeTab === 'approved') && (moviesDisplay.length === 0 ? (
+            {/* 3. MOVIES TABS (Pending & Approved & Votes) */}
+            {(activeTab === 'pending' || activeTab === 'approved' || activeTab === 'votes') && (moviesDisplay.length === 0 ? (
                 <div className="border-4 border-white border-dashed p-12 text-center bg-neutral-900">
                     <h2 className="text-3xl text-neutral-500 mb-2">
-                        {activeTab === 'pending' ? 'HER SEY YOLUNDA' : 'ARŞİV BOŞ'}
+                        {activeTab === 'pending' ? 'HER SEY YOLUNDA' : activeTab === 'votes' ? 'HENÜZ OY YOK' : 'ARŞİV BOŞ'}
                     </h2>
                     <p className="text-xl text-white">
-                        {searchTerm ? 'ARAMA SONUCU BULUNAMADI.' : (activeTab === 'pending' ? 'ONAY BEKLEYEN KAYIT YOK.' : 'HENÜZ ONAYLANMIŞ KAYIT YOK.')}
+                        {searchTerm ? 'ARAMA SONUCU BULUNAMADI.' : (activeTab === 'pending' ? 'ONAY BEKLEYEN KAYIT YOK.' : activeTab === 'votes' ? 'ZİYARETÇİLERDEN HENÜZ OY ALINMADI.' : 'HENÜZ ONAYLANMIŞ KAYIT YOK.')}
                     </p>
                 </div>
             ) : (
@@ -650,6 +662,13 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                                                 ★ {movie.userRating}
                                             </span>
                                         )}
+                                        {/* Show visitor votes if present */}
+                                        {(movie.agreeVotes || movie.disagreeVotes) ? (
+                                            <div className="flex bg-neutral-800 border border-neutral-700">
+                                                <span className="text-green-400 px-2 py-1 border-r border-neutral-700 flex items-center gap-1">😍 {movie.agreeVotes || 0}</span>
+                                                <span className="text-red-400 px-2 py-1 flex items-center gap-1">🤮 {movie.disagreeVotes || 0}</span>
+                                            </div>
+                                        ) : null}
                                     </div>
                                 </div>
 

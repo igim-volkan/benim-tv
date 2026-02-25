@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import { MovieEntry } from '../types';
 import { StarRating } from './StarRating';
@@ -14,6 +14,7 @@ interface MovieCardProps {
 
 export const MovieCard: React.FC<MovieCardProps> = ({ movie, onDelete, onDirectorClick, onClick, className = '' }) => {
   const isWatched = movie.status === 'watched';
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
 
   return (
     <div
@@ -27,7 +28,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onDelete, onDirecto
           <img
             src={movie.posterUrl || movie.posterBase64}
             alt={movie.title}
-            className="w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+            onLoad={() => setIsImageLoaded(true)}
+            className={`w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-all duration-700 ease-in-out ${isImageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
             style={{ imageRendering: 'pixelated' }}
           />
         ) : (

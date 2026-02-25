@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MovieEntry } from '../types';
 
 interface WatchlistCardProps {
@@ -6,6 +6,8 @@ interface WatchlistCardProps {
 }
 
 export const WatchlistCard: React.FC<WatchlistCardProps> = ({ movie }) => {
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
     return (
         <div className="group relative bg-black border-4 border-neutral-700 shadow-[8px_8px_0px_#333] flex flex-col h-full hover:border-yellow-400 transition-colors">
 
@@ -15,7 +17,9 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ movie }) => {
                     <img
                         src={movie.posterUrl || movie.posterBase64}
                         alt={movie.title}
-                        className="w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                        onLoad={() => setIsImageLoaded(true)}
+                        className={`w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-all duration-700 ease-in-out ${isImageLoaded ? 'opacity-100 blur-0' : 'opacity-0 blur-sm'}`}
                         style={{ imageRendering: 'pixelated' }}
                     />
                 ) : (

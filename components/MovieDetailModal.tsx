@@ -8,9 +8,10 @@ interface MovieDetailModalProps {
     onClose: () => void;
     onDelete?: (id: string) => void;
     onVote?: (id: string, voteType: 'agree' | 'disagree') => void;
+    onDirectorClick?: (director: string) => void;
 }
 
-export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClose, onDelete, onVote }) => {
+export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClose, onDelete, onVote, onDirectorClick }) => {
     const [hasVoted, setHasVoted] = useState(false);
     const [optimisticVote, setOptimisticVote] = useState<'agree' | 'disagree' | null>(null);
 
@@ -75,8 +76,8 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                     ? optimisticVote === 'agree' ? 'bg-green-900 text-green-300 border-green-700' : 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
                                     : 'bg-green-900/30 text-green-400 border-green-800 hover:bg-green-900/60 hover:border-green-500'}`}
                         >
-                            <span className="text-2xl leading-none pt-1">😍</span>
-                            <span className="text-sm opacity-80">({(movie.agreeVotes || 0) + (optimisticVote === 'agree' ? 1 : 0)})</span>
+                            <span className="text-xl leading-none pt-1">😍</span>
+                            <span className="text-lg md:text-xl font-black">({(movie.agreeVotes || 0) + (optimisticVote === 'agree' ? 1 : 0)})</span>
                         </button>
                         <button
                             onClick={() => handleVote('disagree')}
@@ -86,8 +87,8 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                     ? optimisticVote === 'disagree' ? 'bg-red-900 text-red-300 border-red-700' : 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
                                     : 'bg-red-900/30 text-red-400 border-red-800 hover:bg-red-900/60 hover:border-red-500'}`}
                         >
-                            <span className="text-2xl leading-none pt-1">🤮</span>
-                            <span className="text-sm opacity-80">({(movie.disagreeVotes || 0) + (optimisticVote === 'disagree' ? 1 : 0)})</span>
+                            <span className="text-xl leading-none pt-1">🤮</span>
+                            <span className="text-lg md:text-xl font-black">({(movie.disagreeVotes || 0) + (optimisticVote === 'disagree' ? 1 : 0)})</span>
                         </button>
                     </div>
                     {hasVoted && <div className="text-yellow-500 text-xs mt-2 text-center lg:text-left">Fikrini belirttiğin için teşekkürler!</div>}
@@ -161,8 +162,21 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                             {g}
                                         </div>
                                     ))}
-                                    <div className="bg-neutral-800 text-neutral-300 px-2 py-0.5 border border-neutral-700 flex items-center gap-1 uppercase">
-                                        <User size={12} /> {movie.director}
+                                    <div className="flex flex-wrap gap-1 items-center">
+                                        {movie.director.split(/,\s*|\s+ve\s+|\s+&\s+/).map((dir, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => {
+                                                    if (onDirectorClick) {
+                                                        onDirectorClick(dir.trim());
+                                                        onClose();
+                                                    }
+                                                }}
+                                                className="bg-neutral-800 text-neutral-300 px-2 py-0.5 border border-neutral-700 uppercase hover:bg-neutral-700 hover:text-white transition-colors"
+                                            >
+                                                {dir.trim()}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -184,8 +198,22 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                         {g}
                                     </div>
                                 ))}
-                                <div className="bg-neutral-800 text-neutral-300 px-3 py-1 border-2 border-neutral-700 flex items-center gap-2 uppercase">
-                                    <User size={16} /> {movie.director}
+                                <div className="flex flex-wrap gap-2 items-center">
+                                    {movie.director.split(/,\s*|\s+ve\s+|\s+&\s+/).map((dir, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => {
+                                                if (onDirectorClick) {
+                                                    onDirectorClick(dir.trim());
+                                                    onClose();
+                                                }
+                                            }}
+                                            className="bg-neutral-800 text-neutral-300 px-3 py-1 border-2 border-neutral-700 uppercase hover:bg-neutral-700 hover:text-white transition-colors cursor-pointer"
+                                            title="Yönetmenin Diğer Filmlerini Gör"
+                                        >
+                                            {dir.trim()}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         </div>
