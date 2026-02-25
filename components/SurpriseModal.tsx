@@ -44,9 +44,9 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
 
                 {/* Desktop Poster (Left Column) - Hidden on Mobile */}
                 <div className="hidden md:block w-[400px] shrink-0 bg-black relative border-r-4 border-white">
-                    {movie.posterBase64 ? (
+                    {(movie.posterUrl || movie.posterBase64) ? (
                         <img
-                            src={movie.posterBase64}
+                            src={movie.posterUrl || movie.posterBase64}
                             alt={movie.title}
                             className="w-full h-full object-cover contrast-125 saturate-150 pixelated"
                         />
@@ -70,9 +70,9 @@ export const SurpriseModal: React.FC<SurpriseModalProps> = ({
                         <div className="flex gap-4 md:hidden items-start pr-12">
                             {/* Mobile Poster Thumbnail */}
                             <div className="w-1/3 shrink-0 border-2 border-white relative">
-                                {movie.posterBase64 ? (
+                                {(movie.posterUrl || movie.posterBase64) ? (
                                     <img
-                                        src={movie.posterBase64}
+                                        src={movie.posterUrl || movie.posterBase64}
                                         alt={movie.title}
                                         className="w-full h-auto object-cover aspect-[2/3] contrast-125 saturate-150 pixelated"
                                     />

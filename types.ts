@@ -9,6 +9,7 @@ export interface MovieMetadata {
   emoji: string; // A fun emoji representing the movie
   themeColor: string; // A hex code suggested for the card border/accent
   posterBase64?: string; // Base64 string of the generated poster
+  posterUrl?: string; // URL of the poster in Firebase Storage
   imdbUrl?: string; // Link to IMDb page
 }
 

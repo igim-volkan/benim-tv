@@ -14,6 +14,7 @@ import {
     increment
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import { storageService } from '../services/storageService';
 
 export const useMovieData = () => {
     const [movies, setMovies] = useState<MovieEntry[]>([]);
@@ -93,6 +94,13 @@ export const useMovieData = () => {
 
             metadata = await fetchMovieMetadata(data.rawTitle, hasManualPoster);
 
+            const finalBase64 = data.manualPosterBase64 || metadata.posterBase64;
+            let posterUrl = null;
+            if (finalBase64) {
+                // Upload to Firebase Storage
+                posterUrl = await storageService.uploadBase64Image(finalBase64, 'posters');
+            }
+
             const entryToSave = {
                 title: data.rawTitle,
                 originalTitle: metadata.originalTitle || data.rawTitle,
@@ -103,7 +111,8 @@ export const useMovieData = () => {
                 emoji: metadata.emoji || '🎬',
                 themeColor: metadata.themeColor || '#64748b',
                 imdbUrl: data.imdbUrl ? data.imdbUrl : (metadata.imdbUrl || ''),
-                posterBase64: data.manualPosterBase64 || metadata.posterBase64 || null,
+                posterUrl: posterUrl || null,
+                posterBase64: null, // Do not store base64 in database anymore
                 status: data.status,
                 userRating: data.userRating || null,
                 userReview: data.userReview || null,

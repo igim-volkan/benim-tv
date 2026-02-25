@@ -9,11 +9,11 @@ export const WatchlistCard: React.FC<WatchlistCardProps> = ({ movie }) => {
     return (
         <div className="group relative bg-black border-4 border-neutral-700 shadow-[8px_8px_0px_#333] flex flex-col h-full hover:border-yellow-400 transition-colors">
 
-            {/* Poster Section */}
-            <div className="w-full aspect-[2/3] relative bg-neutral-900 border-b-4 border-neutral-700 overflow-hidden">
-                {movie.posterBase64 ? (
+            {/* Poster Section (Compact) */}
+            <div className="w-full aspect-[2/3] relative bg-neutral-900 border-b-4 border-neutral-700 overflow-hidden shrink-0">
+                {(movie.posterUrl || movie.posterBase64) ? (
                     <img
-                        src={movie.posterBase64}
+                        src={movie.posterUrl || movie.posterBase64}
                         alt={movie.title}
                         className="w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-transform duration-500"
                         style={{ imageRendering: 'pixelated' }}

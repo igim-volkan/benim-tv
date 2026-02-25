@@ -625,8 +625,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ movies, onApprove, onDel
                             <div key={movie.id} className="border-2 border-white bg-neutral-900 p-4 flex gap-4 items-start">
                                 {/* Poster Thumb */}
                                 <div className="w-24 aspect-[2/3] bg-black flex-shrink-0 border border-neutral-700">
-                                    {movie.posterBase64 ? (
-                                        <img src={movie.posterBase64} alt={movie.title} className="w-full h-full object-cover" />
+                                    {(movie.posterUrl || movie.posterBase64) ? (
+                                        <img src={movie.posterUrl || movie.posterBase64} alt={movie.title} className="w-full h-full object-cover" />
                                     ) : (
                                         <div className="flex items-center justify-center h-full text-2xl">🎬</div>
                                     )}

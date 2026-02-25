@@ -23,9 +23,9 @@ export const MovieCard: React.FC<MovieCardProps> = ({ movie, onDelete, onDirecto
 
       {/* Poster Section */}
       <div className="w-full aspect-[2/3] relative bg-neutral-900 border-b-4 border-neutral-700 overflow-hidden">
-        {movie.posterBase64 ? (
+        {(movie.posterUrl || movie.posterBase64) ? (
           <img
-            src={movie.posterBase64}
+            src={movie.posterUrl || movie.posterBase64}
             alt={movie.title}
             className="w-full h-full object-cover contrast-125 saturate-150 pixelated group-hover:scale-105 transition-transform duration-500"
             style={{ imageRendering: 'pixelated' }}
