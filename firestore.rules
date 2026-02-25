@@ -14,7 +14,17 @@ service cloud.firestore {
       allow read: if true;
       allow create, delete: if isAdmin();
       allow update: if isAdmin() || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['agreeVotes', 'disagreeVotes'])
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['agreeVotes', 'disagreeVotes']) &&
+        (
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['agreeVotes'])) ||
+          (request.resource.data.agreeVotes == resource.data.agreeVotes + 1) ||
+          (request.resource.data.agreeVotes == 1 && !("agreeVotes" in resource.data))
+        ) &&
+        (
+          (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['disagreeVotes'])) ||
+          (request.resource.data.disagreeVotes == resource.data.disagreeVotes + 1) ||
+          (request.resource.data.disagreeVotes == 1 && !("disagreeVotes" in resource.data))
+        )
       );
     }
     
