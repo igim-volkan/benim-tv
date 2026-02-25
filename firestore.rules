@@ -12,7 +12,10 @@ service cloud.firestore {
     // - Only authenticated admins can write (add, edit, delete, approve)
     match /movies/{movieId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['agreeVotes', 'disagreeVotes'])
+      );
     }
     
     // Suggestions Collection

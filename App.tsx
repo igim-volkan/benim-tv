@@ -45,6 +45,7 @@ export default function App() {
     deleteMovie,
     updateMovieStatus,
     approveMovie,
+    voteMovie,
     addSuggestion,
     suggestions,
     deleteSuggestion,
@@ -613,6 +614,7 @@ export default function App() {
           handleDeleteMovie(id);
           setSelectedMovie(null);
         }}
+        onVote={voteMovie}
       />
 
       <LoginModal

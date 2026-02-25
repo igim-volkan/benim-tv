@@ -10,7 +10,8 @@ import {
     doc,
     updateDoc,
     query,
-    orderBy
+    orderBy,
+    increment
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 
@@ -158,6 +159,17 @@ export const useMovieData = () => {
         }
     };
 
+    const voteMovie = async (id: string, voteType: 'agree' | 'disagree') => {
+        try {
+            const movieRef = doc(db, "movies", id);
+            await updateDoc(movieRef, {
+                [voteType === 'agree' ? 'agreeVotes' : 'disagreeVotes']: increment(1)
+            });
+        } catch (error) {
+            console.error("Error voting for movie:", error);
+        }
+    };
+
     const deleteMovie = async (id: string) => {
         try {
             await deleteDoc(doc(db, "movies", id));
@@ -196,6 +208,7 @@ export const useMovieData = () => {
         addMovie,
         updateMovieStatus,
         approveMovie,
+        voteMovie,
         deleteMovie,
         isSubmitting,
         suggestions,

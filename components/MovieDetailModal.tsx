@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Star, Calendar, User, Film, Trash2, ExternalLink, Quote } from 'lucide-react';
 import { MovieEntry } from '../types';
 import { StarRating } from './StarRating';
@@ -7,9 +7,32 @@ interface MovieDetailModalProps {
     movie: MovieEntry | null;
     onClose: () => void;
     onDelete?: (id: string) => void;
+    onVote?: (id: string, voteType: 'agree' | 'disagree') => void;
 }
 
-export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClose, onDelete }) => {
+export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClose, onDelete, onVote }) => {
+    const [hasVoted, setHasVoted] = useState(false);
+    const [optimisticVote, setOptimisticVote] = useState<'agree' | 'disagree' | null>(null);
+
+    useEffect(() => {
+        if (movie) {
+            const votedMovies = JSON.parse(localStorage.getItem('voted_movies') || '[]');
+            setHasVoted(votedMovies.includes(movie.id));
+            setOptimisticVote(null); // Reset when movie changes
+        }
+    }, [movie]);
+
+    const handleVote = (type: 'agree' | 'disagree') => {
+        if (!movie || !onVote || hasVoted) return;
+
+        onVote(movie.id, type);
+
+        const votedMovies = JSON.parse(localStorage.getItem('voted_movies') || '[]');
+        localStorage.setItem('voted_movies', JSON.stringify([...votedMovies, movie.id]));
+        setHasVoted(true);
+        setOptimisticVote(type);
+    };
+
     useEffect(() => {
         const handleEsc = (e: KeyboardEvent) => {
             if (e.key === 'Escape') onClose();
@@ -19,6 +42,59 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
     }, [onClose]);
 
     if (!movie) return null;
+
+    const renderRatingAndVoting = () => {
+        if (!movie.userRating) return null;
+        return (
+            <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center bg-black/20 p-4 lg:p-6 border-l-4 border-neutral-700 rounded-r-lg">
+                {/* User Rating */}
+                <div className="flex flex-col shrink-0">
+                    <div className="flex items-center gap-2 text-neutral-500 mb-2 uppercase text-sm font-bold">
+                        <Star size={16} /> Puanım
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <StarRating rating={movie.userRating} readOnly size={20} />
+                        <span className="text-yellow-400 font-bold text-2xl">{movie.userRating}/5</span>
+                    </div>
+                </div>
+
+                {/* Vertical Divider for desktop */}
+                <div className="hidden lg:block w-px h-16 bg-neutral-700"></div>
+                {/* Horizontal Divider for mobile */}
+                <div className="block lg:hidden w-full h-px bg-neutral-700"></div>
+
+                {/* VISITOR VOTING UI */}
+                <div className="flex-1 w-full flex flex-col justify-center">
+                    <div className="text-neutral-400 text-xs font-bold uppercase tracking-wider mb-2">Sence?</div>
+                    <div className="flex flex-col sm:flex-row items-stretch gap-2">
+                        <button
+                            onClick={() => handleVote('agree')}
+                            disabled={hasVoted}
+                            className={`flex-1 py-2 px-3 font-bold text-sm border-2 transition-colors flex justify-center items-center gap-1.5 
+                                ${hasVoted
+                                    ? optimisticVote === 'agree' ? 'bg-green-900 text-green-300 border-green-700' : 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
+                                    : 'bg-green-900/30 text-green-400 border-green-800 hover:bg-green-900/60 hover:border-green-500'}`}
+                        >
+                            <span className="text-2xl leading-none pt-1">😍</span>
+                            <span className="text-sm opacity-80">({(movie.agreeVotes || 0) + (optimisticVote === 'agree' ? 1 : 0)})</span>
+                        </button>
+                        <button
+                            onClick={() => handleVote('disagree')}
+                            disabled={hasVoted}
+                            className={`flex-1 py-2 px-3 font-bold text-sm border-2 transition-colors flex justify-center items-center gap-1.5 
+                                ${hasVoted
+                                    ? optimisticVote === 'disagree' ? 'bg-red-900 text-red-300 border-red-700' : 'bg-neutral-800 text-neutral-500 border-neutral-700 cursor-not-allowed'
+                                    : 'bg-red-900/30 text-red-400 border-red-800 hover:bg-red-900/60 hover:border-red-500'}`}
+                        >
+                            <span className="text-2xl leading-none pt-1">🤮</span>
+                            <span className="text-sm opacity-80">({(movie.disagreeVotes || 0) + (optimisticVote === 'disagree' ? 1 : 0)})</span>
+                        </button>
+                    </div>
+                    {hasVoted && <div className="text-yellow-500 text-xs mt-2 text-center lg:text-left">Fikrini belirttiğin için teşekkürler!</div>}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
@@ -76,61 +152,44 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                 <h2 className="text-3xl font-bold text-yellow-400 leading-none uppercase mb-2 text-shadow-sm break-words">
                                     {movie.title.toLocaleUpperCase('tr-TR')}
                                 </h2>
-                                <div className="flex flex-wrap gap-2 text-xs font-bold">
-                                    <div className="bg-yellow-400 text-black px-2 py-0.5 border border-transparent">
+                                <div className="flex flex-wrap gap-2 text-xs font-bold mt-2">
+                                    <div className="bg-yellow-400 text-black px-2 py-0.5 border border-transparent flex items-center">
                                         {movie.year}
                                     </div>
                                     {movie.genre.slice(0, 2).map(g => (
-                                        <div key={g} className="bg-cyan-900 text-cyan-200 px-2 py-0.5 border border-cyan-700 uppercase">
+                                        <div key={g} className="bg-cyan-900 text-cyan-200 px-2 py-0.5 border border-cyan-700 uppercase flex items-center">
                                             {g}
                                         </div>
                                     ))}
+                                    <div className="bg-neutral-800 text-neutral-300 px-2 py-0.5 border border-neutral-700 flex items-center gap-1 uppercase">
+                                        <User size={12} /> {movie.director}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+
 
                         {/* Desktop Header - Hidden on Mobile */}
                         <div className="hidden md:block">
                             <h2 className="text-5xl font-bold text-yellow-400 leading-none uppercase mb-2 text-shadow-sm">
                                 {movie.title.toLocaleUpperCase('tr-TR')}
                             </h2>
-                            <div className="flex flex-wrap gap-2 text-base font-bold">
-                                <div className="bg-yellow-400 text-black px-3 py-1 border-2 border-transparent">
+                            <div className="flex flex-wrap gap-2 text-base font-bold mt-2">
+                                <div className="bg-yellow-400 text-black px-3 py-1 border-2 border-transparent flex items-center">
                                     {movie.year}
                                 </div>
                                 {movie.genre.map(g => (
-                                    <div key={g} className="bg-cyan-900 text-cyan-200 px-3 py-1 border-2 border-cyan-700 uppercase">
+                                    <div key={g} className="bg-cyan-900 text-cyan-200 px-3 py-1 border-2 border-cyan-700 uppercase flex items-center">
                                         {g}
                                     </div>
                                 ))}
+                                <div className="bg-neutral-800 text-neutral-300 px-3 py-1 border-2 border-neutral-700 flex items-center gap-2 uppercase">
+                                    <User size={16} /> {movie.director}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="h-px bg-neutral-700 w-full" />
-
-                        {/* Info Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 text-base md:text-lg">
-                            <div>
-                                <div className="flex items-center gap-2 text-neutral-500 mb-1 uppercase text-sm font-bold">
-                                    <User size={16} /> Yönetmen
-                                </div>
-                                <div className="text-white text-lg md:text-xl">
-                                    {movie.director}
-                                </div>
-                            </div>
-
-                            {movie.userRating && (
-                                <div>
-                                    <div className="flex items-center gap-2 text-neutral-500 mb-1 uppercase text-sm font-bold">
-                                        <Star size={16} /> Puanım
-                                    </div>
-                                    <div className="flex items-center gap-3">
-                                        <StarRating rating={movie.userRating} readOnly size={20} />
-                                        <span className="text-yellow-400 font-bold text-xl md:text-2xl">{movie.userRating}/5</span>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
 
                         {/* Summary */}
                         <div className="bg-black/30 p-4 md:p-6 border-l-4 border-yellow-400">
@@ -141,6 +200,10 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                                 {movie.summary}
                             </p>
                         </div>
+
+
+                        {/* Rating and Voting (Now Desktop & Mobile unified location) */}
+                        {renderRatingAndVoting()}
 
                         {/* Review */}
                         {movie.userReview && (
@@ -156,7 +219,7 @@ export const MovieDetailModal: React.FC<MovieDetailModalProps> = ({ movie, onClo
                         )}
 
                         {/* Footer Actions */}
-                        <div className="mt-4 md:mt-8 flex items-center justify-between pt-6 border-t border-neutral-700">
+                        <div className="flex items-center justify-between">
                             {movie.imdbUrl && (
                                 <a
                                     href={movie.imdbUrl}
