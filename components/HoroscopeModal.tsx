@@ -92,9 +92,9 @@ export const HoroscopeModal: React.FC<HoroscopeModalProps> = ({ isOpen, onClose,
                                     {selectedSign} İÇİN ÖNERİ:
                                 </h3>
 
-                                {recommendedMovie.posterBase64 && (
+                                {(recommendedMovie.posterUrl || recommendedMovie.posterBase64) && (
                                     <img
-                                        src={recommendedMovie.posterBase64}
+                                        src={recommendedMovie.posterUrl || recommendedMovie.posterBase64}
                                         alt={recommendedMovie.title}
                                         className="w-24 h-36 md:w-32 md:h-48 object-cover border-2 border-white mb-4 shadow-[4px_4px_0px_#333]"
                                     />
